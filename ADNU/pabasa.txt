@@ -1,0 +1,6 @@
+For SQL database
+
+< apcadnu - database
+[tables inquiryform /column custom_id,name,email,message/] >
+pa create if wala. 
+yan lang laman since yung site walang kahit anong form. 
