@@ -2,11 +2,11 @@
 session_start(); 
 include 'sections/header.php'; 
 ?>
+<!--references-->
+<script src="jscript/script.js"></script>
+<link rel="stylesheet" href="css/styles.css">
 
-<!-- Link external CSS -->
-<link rel="stylesheet" href="styles.css">
 
-<!-- Pop-up Modal -->
 <div id="overlay" class="overlay" onclick="closePopup()"></div>
 <div id="popup" class="modal">
     <span class="close-btn" onclick="closePopup()">&times;</span>
@@ -58,7 +58,7 @@ include 'sections/header.php';
 <?php 
 include 'sections/footer.php'; 
 
-// Show the popup if session variables exist
+
 if (isset($_SESSION['name']) && isset($_SESSION['email'])) {
     echo "<script>
             document.addEventListener('DOMContentLoaded', function() {
@@ -70,5 +70,4 @@ if (isset($_SESSION['name']) && isset($_SESSION['email'])) {
 }
 ?>
 
-<!-- Link external JavaScript -->
-<script src="script.js"></script>
+
