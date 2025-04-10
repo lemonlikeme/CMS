@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placeholder</title>
+    <link rel='stylesheet' href='styles.css'>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navdiv">
+            <div class="logo"><a href='#'>Placeholder</a></div>
+
+            <ul>
+                <li><a href='#'>Home</a></li>
+                <li><a href='#'>Product</a></li>
+                <li><a href='#'>About</a></li>
+                <li><a href='#'>Contacts</a></li>
+            </ul>
+
+            <div class="nav-btn">
+                <a href="#" id="loginBtn" class="nav-button">Log In</a>
+                <a href="#" class="nav-button">Get Started</a>
+              </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-overlay">
+          <div class="hero-content">
+            <h1>A website<br>Let's make it real</h1>
+            <a href="#" class="cta-button"><span>Get Started</span></a>
+          </div>
+        </div>
+      </section>
+
+    <section class="image-text-section">
+        <div class="carousel-container">
+            <div class="carousel">
+                <img src="carousel1-image.jpg" alt="Image 1"/>
+                <img src="carousel2-image.jpg" alt="Image 2"/>
+                <img src="carousel3-image.jpg" alt="Image 3"/>
+                <img src="carousel4-image.jpg" alt="Image 4"/>
+                <img src="carousel5-image.jpg" alt="Image 5"/>
+
+                <img class="duplicate" src="carousel1-image.jpg" alt="Image 1"/>
+                <img class="duplicate" src="carousel2-image.jpg" alt="Image 2"/>
+                <img class="duplicate" src="carousel3-image.jpg" alt="Image 3"/>
+                <img class="duplicate" src="carousel4-image.jpg" alt="Image 4"/>
+                <img class="duplicate" src="carousel5-image.jpg" alt="Image 5"/>
+            </div>
+        </div>
+        <div class="text-content">
+            <h2>Explore our feratures</h2>
+            <p>Discover powerful tools and service design to make your web experience seamless and productive</p>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <div class="about-container">
+            <h2>About Placeholder</h2>
+            <p>This website was designed to help users easily create their own stunning websites without writing a single line of code. With intuitive drag-and-drop tools, pre-designed templates, and customization options, building a website has never been easier.</p>
+        </div>
+    </section>
+
+    <section class="use-cases">
+        <h2>Who is Placeholder for?</h2>
+        <div class="use-cards">
+            <div class="use-card" style="background-image: url('card-creative.jpg')">
+              <div class="card-content">
+                <h3>For Creatives</h3>
+                <p>Designers, artists, and freelancers can build beautiful portfolios effortlessly.</p>
+              </div>
+            </div>
+            <div class="use-card" style="background-image: url('card-start-up.jpg')">
+              <div class="card-content">
+                <h3>For Startups</h3>
+                <p>Quickly launch landing pages to pitch, validate, and grow your business ideas.</p>
+              </div>
+            </div>
+            <div class="use-card" style="background-image: url('card-portfolio.jpg')">
+              <div class="card-content">
+                <h3>For Portfolios</h3>
+                <p>Showcase your work in a stylish, responsive website—no coding needed.</p>
+              </div>
+            </div>
+          </div>          
+    </section>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#">Terms</a>
+                <a href="#">Privacy</a>
+                <span>© 2025 Placeholder</span>
+            </div>
+            <div class="back-to-top-wrapper">
+                <button class="back-to-top" onclick="scrollToTop()">Back to Top</button>
+            </div>
+        </div>
+    </footer>
+
+    <div id="authModal" class="modal">
+      <div class="auth-container" id="authContainer">
+    
+        <div class="form-container sign-up-container">
+          <form>
+            <h2>Create Account</h2>
+            <input type="text" placeholder="Name" />
+            <input type="email" placeholder="Email" />
+            <input type="password" placeholder="Password" />
+            <button>Sign Up</button>
+          </form>
+        </div>
+    
+        <div class="form-container sign-in-container">
+          <form>
+            <h2>Sign in</h2>
+            <input type="email" placeholder="Email" />
+            <input type="password" placeholder="Password" />
+            <button>Login</button>
+          </form>
+        </div>
+    
+        <div class="overlay-container">
+          <div class="overlay">
+            <div class="overlay-panel overlay-left">
+              <h2>Welcome Back!</h2>
+              <p>Already have an account?</p>
+              <button id="slideToLogin">Login</button>
+            </div>
+            <div class="overlay-panel overlay-right">
+              <h2>Hello, Friend!</h2>
+              <p>Don't have an account?</p>
+              <button id="slideToSignup">Sign Up</button>
+            </div>
+          </div>
+        </div>
+    
+        <span class="close">&times;</span>
+      </div>
+    </div>
+    
+    <script src="scripts.js"></script>
+</body>
+</html>
