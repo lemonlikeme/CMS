@@ -1,0 +1,30 @@
+{
+    "logo_url": "images/ue_logo.png",
+    "welcome_title": "WELCOME TO THE UNIVERSITY OF THE EAST!",
+    "welcome_text": "UE is one of the Philippines’ leading universities, having produced, for 75 years now as of September 2021, over a million alumni who have made their mark as leaders and achievers in various fields of endeavor across the country and around the world.",
+    "accreditation_button_text": "Accreditation Status",
+    "campus_tour_button_text": "Campus Tour",
+    
+    "carousel_image1": "images/carousel1.jpg",  
+    "carousel_image2": "images/carousel2.png",
+    "carousel_image3": "images/carousel3.png",  
+    "carousel_image4": "images/carousel4.jpg",
+    
+    "news_image1": "images/news1.jpg",
+    "news_image2": "images/news2.jpg",
+    "news_image3": "images/news3.jpg",
+    "news_image4": "images/news4.jpg",
+
+    "news_date1": "February 28, 2025",
+    "news_date2": "February 27, 2025",
+    "news_date3": "March 11, 2025",
+    "news_date4": "March 10, 2025",
+    
+    "news_title1": "Office for International Affairs & External Linkages presents: Asia Africa Forum on Corruption",
+    "news_title2": "UE CALOOCAN WEEK 2025: UPHOLDING EXCELLENCE BEYOND LIMITS",
+    "news_title3": "UE RANKS 9TH IN MLA, 20TH AMONG TOP PHL UNIVERSITIES!",
+    "news_title4": "UE Fine Arts Alumni Set to Honor Alma Mater with Grand Exhibition",
+
+
+    "portal_ad_image": "images/portal_ad.jpg"
+}
