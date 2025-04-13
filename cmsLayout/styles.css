@@ -1,0 +1,287 @@
+/* General Styles */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Sidebar Toggle Button */
+#sidebar-toggle {
+    position: fixed;
+    bottom: 10px; /* Move to bottom-left corner */
+    left: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1002; /* Higher than sidebar to stay on top */
+    background-color: #3498db;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    transition: opacity 0.3s ease; /* Smooth transition */
+}
+
+#sidebar-toggle:hover {
+    background-color: #2980b9;
+}
+
+/* Hide the button when sidebar is open */
+#sidebar.active + #sidebar-toggle {
+    display: none;
+}
+
+/* Sidebar */
+#sidebar {
+    width: 160px; /* Reduced width */
+    background-color: #2c3e50;
+    color: white;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: -160px; /* Initially hidden off-screen */
+    z-index: 1001; /* Higher than everything else */
+    transition: left 0.3s ease; /* Smooth transition */
+    overflow-y: auto; /* Enable vertical scrolling */
+    display: none; /* Completely hidden when closed */
+}
+
+#sidebar.active {
+    left: 0; /* Slide in to show sidebar */
+    display: block; /* Show sidebar when active */
+}
+
+/* Sidebar content */
+#sidebar h2 {
+    margin-top: 0;
+}
+
+#sidebar button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#sidebar button:hover {
+    background-color: #2980b9;
+}
+
+/* Scrollbar styling */
+#sidebar::-webkit-scrollbar {
+    width: 8px; /* Width of the scrollbar */
+}
+
+#sidebar::-webkit-scrollbar-track {
+    background: #2c3e50; /* Color of the track */
+}
+
+#sidebar::-webkit-scrollbar-thumb {
+    background: #3498db; /* Color of the scrollbar handle */
+    border-radius: 4px; /* Rounded corners */
+}
+
+#sidebar::-webkit-scrollbar-thumb:hover {
+    background: #2980b9; /* Color of the scrollbar handle on hover */
+}
+/* Canvas */
+#canvas {
+    flex-grow: 1;
+    background-color: #ecf0f1;
+    position: relative;
+    overflow: auto; /* Make canvas scrollable */
+    padding: 20px;
+    height: 100vh; /* Full height */
+}
+
+/* Header */
+.header {
+    width: 100%; /* Full width of canvas */
+    background-color: #34495e;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    height: 50px; /* Fixed height for header */
+}
+
+/* Navbar */
+.navbar {
+    width: 100%; /* Full width of canvas */
+    background-color: #2c3e50;
+    color: white;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Space between search bar and nav buttons */
+    position: fixed;
+    top: 50px; /* Adjusted for header */
+    left: 0;
+    z-index: 1000;
+    height: 50px; /* Fixed height for navbar */
+}
+
+/* Search Bar */
+.navbar .search-bar {
+    display: flex;
+    align-items: center;
+    margin-right: auto; /* Push the search bar to the left */
+}
+
+.navbar .search-bar input {
+    padding: 5px;
+    border: none;
+    border-radius: 3px;
+    margin-right: 5px;
+}
+
+.navbar .search-bar button {
+    padding: 5px 10px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.navbar .search-bar button:hover {
+    background-color: #2980b9;
+}
+
+/* Nav Buttons */
+.navbar .nav-buttons {
+    display: flex;
+    gap: 10px; /* Space between buttons */
+    justify-content: center; /* Center the buttons horizontally */
+    flex-grow: 1; /* Allow the nav-buttons to take up remaining space */
+}
+
+.navbar .nav-buttons button {
+    padding: 5px 10px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.navbar .nav-buttons button:hover {
+    background-color: #2980b9;
+}
+
+/* Footer */
+.footer {
+    width: 100%; /* Full width of canvas */
+    background-color: #34495e;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    height: 50px; /* Fixed height for footer */
+}
+
+/* Draggable Elements */
+.draggable {
+    position: absolute;
+    cursor: grab;
+    padding: 10px;
+    border: 1px dashed #ccc;
+    background-color: white;
+}
+
+/* Section */
+.section {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    position: relative;
+    width: 100%; /* Full width of the canvas */
+    left: 0; /* Ensure it touches the very left edge */
+    height: 600px; /* 3x bigger (200px * 3) */
+    overflow: auto; /* Ensure content doesn't overflow */
+    margin-bottom: 0; /* Remove gaps between sections */
+    box-sizing: border-box; /* Include padding in the width calculation */
+}
+
+.section .section-content {
+    margin-bottom: 10px;
+}
+
+/* Style for the delete button */
+.draggable button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 3px;
+}
+
+.draggable button:hover {
+    background-color: darkred;
+}
+
+/* Style for the delete button */
+.delete-button {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: red;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 50%;
+    font-size: 14px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.delete-button:hover {
+    background-color: darkred;
+}
+
+/* Style for the layout list */
+#layout-list {
+    margin-top: 10px;
+}
+
+/* Style for each layout item */
+.layout-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    border: 1px solid #ccc;
+    margin-bottom: 5px;
+    background-color: #f9f9f9;
+}
+
+/* Style for buttons in the layout item */
+.layout-item button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.layout-item button:hover {
+    background-color: #2980b9;
+}
