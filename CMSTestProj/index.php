@@ -72,23 +72,23 @@
    <?php include 'sections/footer.php';?>
     <div id="authModal" class="modal">
       <div class="auth-container" id="authContainer">
-    
+
         <div class="form-container sign-up-container">
           <form>
             <h2>Create Account</h2>
-            <input type="text" placeholder="Name" />
-            <input type="email" placeholder="Email" />
-            <input type="password" placeholder="Password" />
-            <button>Sign Up</button>
+            <input type="text" name="name" placeholder="Name" required/>
+            <input type="email" name="email" placeholder="Email" required/>
+            <input type="password" name="password" placeholder="Password" required/>
+            <button type="submit">Sign Up</button>
           </form>
         </div>
     
         <div class="form-container sign-in-container">
           <form>
             <h2>Sign in</h2>
-            <input type="email" placeholder="Email" />
-            <input type="password" placeholder="Password" />
-            <button>Login</button>
+            <input type="email" placeholder="Email" required/>
+            <input type="password" placeholder="Password" required/>
+            <button type="submit">Login</button>
           </form>
         </div>
     
@@ -112,5 +112,6 @@
     </div>
     
     <script src="jscripts/scripts.js"></script>
+    <script src="jscripts/toast.js"></script>
 </body>
 </html>

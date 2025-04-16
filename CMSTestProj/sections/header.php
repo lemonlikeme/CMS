@@ -12,7 +12,7 @@
 
             <div class="nav-btn">
                 <a href="#" id="loginBtn" class="nav-button">Log In</a>
-                <a href="#" class="nav-button">Get Started</a>
+                <a href="GET%20STARTED/index.html" class="nav-button">Get Started</a>
               </div>
         </div>
     </nav>
