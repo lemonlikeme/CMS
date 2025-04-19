@@ -695,3 +695,9 @@ button {
 .back-to-top:focus {
     outline: none;
 }
+
+.nav-welcome {
+    color: #fff;
+    margin-right: 10px;
+    font-weight: bold;
+}

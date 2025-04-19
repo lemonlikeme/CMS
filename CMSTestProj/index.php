@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,7 +15,7 @@
         <div class="hero-overlay">
           <div class="hero-content">
             <h1>A website<br>Let's make it real</h1>
-            <a href="#" class="cta-button"><span>Get Started</span></a>
+            <a href="Get Started/get_Started.php" class="cta-button"><span>Get Started</span></a>
           </div>
         </div>
       </section>
@@ -84,10 +87,10 @@
         </div>
     
         <div class="form-container sign-in-container">
-          <form>
+          <form action="db/login.php" method="POST">
             <h2>Sign in</h2>
-            <input type="email" placeholder="Email" required/>
-            <input type="password" placeholder="Password" required/>
+            <input type="email" name="email" placeholder="Email" required/>
+            <input type="password" name="password" placeholder="Password" required/>
             <button type="submit">Login</button>
           </form>
         </div>

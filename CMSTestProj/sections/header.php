@@ -1,3 +1,4 @@
+
 <header>
   <nav class="navbar">
         <div class="navdiv">
@@ -11,8 +12,13 @@
             </ul>
 
             <div class="nav-btn">
-                <a href="#" id="loginBtn" class="nav-button">Log In</a>
-                <a href="GET%20STARTED/index.html" class="nav-button">Get Started</a>
+                <?php if (!isset($_SESSION['name'])): ?>
+                    <a href="#" id="loginBtn" class="nav-button">Log In</a>
+                <?php else: ?>
+                    <span class="nav-welcome">Welcome, <?= htmlspecialchars($_SESSION['name']) ?>!</span>
+                    <a href="db/logout.php" class="nav-button">Logout</a>
+                <?php endif; ?>
+                <a href="GET%20STARTED/get_Started.php" class="nav-button">Get Started</a>
               </div>
         </div>
     </nav>
