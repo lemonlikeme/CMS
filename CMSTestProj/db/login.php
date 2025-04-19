@@ -1,5 +1,5 @@
 <?php
-header('Content-Type: text/plain');
+session_start();
 
 include 'dbConfiguration.php';
 
@@ -13,27 +13,25 @@ if ($conn->connect_error) {
 $email = $_POST['email'];
 $passwordInput = $_POST['password'];
 
-$sql = "SELECT id, password FROM users WHERE email = ?";
+$sql = "SELECT name, password FROM users WHERE email = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $email);
 $stmt->execute();
 $stmt->store_result();
 
 if ($stmt->num_rows === 1) {
-    $stmt->bind_result($id, $hashedPassword);
+    $stmt->bind_result($name, $hashedPassword);
     $stmt->fetch();
 
     if (password_verify($passwordInput, $hashedPassword)) {
-        http_response_code(200);
-        echo "success";
-    } else {
-        http_response_code(401);
-        echo "Invalid credentials";
+        $_SESSION['name'] = $name; 
+        echo "Session started\n";
+        echo "Name from DB: $name\n";
+        echo "Password correct: " . (password_verify($passwordInput, $hashedPassword) ? "yes" : "no");
+        header("Location: ../Get%20Started/get_Started.php"); 
+        exit; 
     }
-} else {
-    http_response_code(401);
-    echo "Invalid credentials";
 }
 
-$stmt->close();
-$conn->close();
+header("Location: ../index.php?login=failed");
+exit;
