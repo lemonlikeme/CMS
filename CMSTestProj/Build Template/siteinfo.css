@@ -453,4 +453,146 @@
     gap: 195px;
     justify-content: flex-end;
   }
+  .page-colors .content {
+    margin-top: 2rem;
+  }
+
+  .site-preview {
+    margin-top: 2rem;
+  }
+
+  .preview-container {
+    background-color: #f8f9fa;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  .preview-main {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    align-items: flex-start;
+  }
+
+  .preview-image {
+    width: 250px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    background-color: #f0f0f0;
+  }
+
+  .preview-text h2 {
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .preview-text p {
+    font-size: 0.95rem;
+    color: #333;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+  }
+
+  .learn-more {
+    padding: 0.7rem 1.4rem;
+    border-radius: 999px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  .preview-footer h3 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .social-preview {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .social-box {
+    width: 50px;
+    height: 50px;
+    background-color: #e0e0e0;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
+  }
+
+  .social-box img {
+    width: 24px;
+    height: 24px;
+    filter: invert(1);
+  }
+
+  .social-box.facebook {
+    background-color: #1877f2;
+  }
+
+  .social-box.instagram {
+    background-color: #e1306c;
+  }
+
+  .social-box.twitter {
+    background-color: #000000;
+  }
+
+  .palette-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+  }
+
+  .palette-set {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .palette-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+
+  .palette-group {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .palette {
+    display: flex;
+    width: 80px;
+    height: 32px;
+    border-radius: 999px;
+    overflow: hidden;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+    z-index: 1;
+  }
+  
+  .palette:hover {
+    transform: scale(1.05);
+  }
+  
+  .palette.selected {
+    border-color: black;
+    transform: scale(1.05);
+  }
+  
+  .palette-color {
+    width: 100%;
+    height: 100%;
+    flex: 1;
+    border-right: 1px solid #ccc;
+    box-sizing: border-box;
+  }
   

@@ -52,7 +52,7 @@
 
       <div class="button-container">
         <a href="homepage.php" class="button-back">BACK</a>
-        <a href="colors.html" class="button-next">NEXT</a>
+        <a href="colors.php" class="button-next">NEXT</a>
       </div>
     </div>
   </div>
