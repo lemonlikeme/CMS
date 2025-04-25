@@ -1,0 +1,6 @@
+kasunod ng build templates to
+pa apply ng logic na dapat pag clinick yung pallete
+mag iiba din yung kulay ng preview
+ganun din sa gawin nio button at apply yung same logic
+na pag clinick magiging ganun yung font ng preview
+
