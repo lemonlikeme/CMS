@@ -1,4 +1,4 @@
-kasunod ng build templates to
+kasunod ng build templates to yung Build templates v2
 pa apply ng logic na dapat pag clinick yung pallete
 mag iiba din yung kulay ng preview
 ganun din sa gawin nio button at apply yung same logic
