@@ -1,0 +1,75 @@
+/* Photo Collage Styles */
+.collage-section {
+    padding: 60px 20px;
+    background-color: #f9f9f9;
+    text-align: center;
+  }
+  
+  .collage-title {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 30px;
+  }
+  
+  .collage-container {
+    display: grid;
+    grid-template-columns: 1fr repeat(2, 1fr) 1fr;  /* 1 large image, 2 small images, 1 large image */
+    grid-template-rows: 1fr 1fr;  /* Two rows */
+    gap: 20px;
+    justify-items: center;
+  }
+  
+  .collage-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .collage-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .collage-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    transition: opacity 0.3s ease;
+  }
+  
+  .collage-item:hover .collage-image {
+    opacity: 0.8;
+  }
+  
+  .large-item {
+    grid-column: span 2;  
+    grid-row: span 2;  
+  }
+  
+  .first {
+    grid-column: 1 / 2;  
+    grid-row: 1 / 3; 
+  }
+  
+  .last {
+    grid-column: 3 / 4; 
+    grid-row: 1 / 3;  
+  }
+  
+  .small-item {
+    height: 100%;  
+  }
+  
+  @media (max-width: 768px) {
+    .collage-container {
+      grid-template-columns: 1fr 1fr;  
+      grid-template-rows: auto;  
+    }
+  
+    .first, .last {
+      grid-column: span 2;  
+    }
+  }
+  

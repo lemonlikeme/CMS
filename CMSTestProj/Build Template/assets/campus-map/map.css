@@ -1,0 +1,50 @@
+/* .campus-map-section {
+    padding: 60px 20px;
+    background-color: #f0f8ff;
+    text-align: center;
+  }
+  
+  .map-title {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    color: #2c3e50;
+  }
+  
+  .map-container {
+    position: relative;
+    max-width: 900px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+  
+  #campusMap {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+  }
+  
+  .map-marker {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #e74c3c;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    transform: translate(-50%, -50%);
+    transition: transform 0.3s, background 0.3s;
+  }
+  
+  .map-marker:hover {
+    background: #c0392b;
+    transform: translate(-50%, -50%) scale(1.5);
+  }
+  
+  .map-info {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    color: #34495e;
+    min-height: 40px;
+  }
+   */
