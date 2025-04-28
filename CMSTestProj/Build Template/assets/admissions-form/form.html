@@ -1,0 +1,48 @@
+<section class="admissions-section">
+    <h2 class="form-title">Admissions Form</h2>
+    <form class="admissions-form" id="admissionsForm">
+      
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" name="fullName" required>
+      </div>
+  
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" required>
+      </div>
+  
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone">
+      </div>
+  
+      <div class="form-group">
+        <label for="program">Select Program</label>
+        <select id="program" name="program" required>
+          <option value="">-- Please Choose --</option>
+          <option value="computer-science">Computer Science</option>
+          <option value="business-administration">Business Administration</option>
+          <option value="psychology">Psychology</option>
+          <option value="mechanical-engineering">Mechanical Engineering</option>
+          <option value="graphic-design">Graphic Design</option>
+          <option value="biology">Biology</option>
+          <option value="political-science">Political Science</option>
+          <option value="education">Education</option>
+          <option value="environmental-science">Environmental Dcience</option>
+        </select>
+      </div>
+  
+      <div class="form-group">
+        <label for="message">Additional Information</label>
+        <textarea id="message" name="message" rows="4"></textarea>
+      </div>
+  
+      <button type="submit" class="submit-btn">Submit Application</button>
+      
+    </form>
+  </section>
+  
+  <link rel="stylesheet" href="form.css">
+  <script src="form.js" defer></script>
+  
