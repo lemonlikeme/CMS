@@ -13,8 +13,8 @@
   
   .collage-container {
     display: grid;
-    grid-template-columns: 1fr repeat(2, 1fr) 1fr;  /* 1 large image, 2 small images, 1 large image */
-    grid-template-rows: 1fr 1fr;  /* Two rows */
+    grid-template-columns: 1fr repeat(2, 1fr) 1fr; 
+    grid-template-rows: 1fr 1fr; 
     gap: 20px;
     justify-items: center;
   }

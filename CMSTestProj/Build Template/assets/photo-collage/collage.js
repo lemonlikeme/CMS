@@ -1,4 +1,3 @@
-// Optional: Add interactivity, if desired
 document.addEventListener('DOMContentLoaded', () => {
     const images = document.querySelectorAll('.collage-image');
   
