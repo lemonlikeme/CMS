@@ -52,6 +52,43 @@ body {
   letter-spacing: 0.5px;
 }
 
+.tab-buttons {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.tab {
+  flex: 1;
+  padding: 0.75rem;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-weight: 600;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab:hover {
+  background: #f0f0f0;
+}
+
+.tab.active {
+  border-bottom: 2px solid #4A90E2;
+  color: #4A90E2;
+  background: #f9f9f9;
+}
+
+.panel-content {
+  display: block;
+}
+
+.panel-content.hidden {
+  display: none;
+}
+
 .asset-category {
   margin-bottom: 2.5rem;
   padding-bottom: 1.5rem;

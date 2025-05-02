@@ -15,47 +15,68 @@
       </div>
   
       <div class="asset-panel">
-        <h2>Assets</h2>
-  
-        <div class="asset-category">
-          <h3>Homepage</h3>
-          <div class="asset-grid">
-            <button data-asset="programs-listing">Programs</button>
-            <button data-asset="news-event">News</button>
-            <button data-asset="campus-life">Campus Life</button>
-            <button data-asset="photo-collage">Photos</button>
-            <button data-asset="socail-media">Social</button>
+        <div class="tab-buttons">
+          <button class="tab active" data-tab="assets">Assets</button>
+          <button class="tab" data-tab="colors">Colors</button>
+          <button class="tab" data-tab="fonts">Fonts</button>
+        </div>
+      
+        <div class="panel-content" id="panel-assets">
+          <h2>Assets</h2>
+
+          <div class="asset-category">
+            <h3>Homepage</h3>
+            <div class="asset-grid">
+              <button data-asset="programs-listing">Programs</button>
+              <button data-asset="news-event">News</button>
+              <button data-asset="campus-life">Campus Life</button>
+              <button data-asset="photo-collage">Photos</button>
+              <button data-asset="social-media">Social</button>
+            </div>
+          </div>
+
+          <div class="asset-category">
+            <h3>About</h3>
+            <div class="asset-grid">
+              <button data-asset="university-history">History</button>
+              <button data-asset="campus-life">Campus Life</button>
+              <button data-asset="social-media">Social Media</button>
+            </div>
+          </div>
+    
+          <div class="asset-category">
+            <h3>Admissions</h3>
+            <div class="asset-grid">
+              <button data-asset="admissions-form">Admission Form</button>
+              <button data-asset="programs-listing">Programs</button>
+              <button data-asset="faq">FAQ</button>
+              <button data-asset="academic-calendar">Calendar</button>
+            </div>
+          </div>
+    
+          <div class="asset-category">
+            <h3>Contact</h3>
+            <div class="asset-grid">
+              <button data-asset="contact-info">Contact Info</button>
+              <button data-asset="campus-map">Campus Map</button>
+              <button data-asset="social-media">Social Media</button>
+            </div>
           </div>
         </div>
-  
-        <div class="asset-category">
-          <h3>About</h3>
-          <div class="asset-grid">
-            <button data-asset="university-history">History</button>
-            <button data-asset="campus-life">Campus Life</button>
-            <button data-asset="socail-media">Social Media</button>
-          </div>
+      
+        <div class="panel-content hidden" id="panel-colors">
+          <h2>Colors</h2>
+
+          <p style="text-align:center;">Color settings panel coming soon.</p>
         </div>
-  
-        <div class="asset-category">
-          <h3>Admissions</h3>
-          <div class="asset-grid">
-            <button data-asset="admission-form">Admission Form</button>
-            <button data-asset="programs-listing">Programs</button>
-            <button data-asset="faq">FAQ</button>
-            <button data-asset="academic-calendar">Calendar</button>
-          </div>
-        </div>
-  
-        <div class="asset-category">
-          <h3>Contact</h3>
-          <div class="asset-grid">
-            <button data-asset="contact-info">Contact Info</button>
-            <button data-asset="campus-map">Campus Map</button>
-            <button data-asset="socail-media">Social Media</button>
-          </div>
+      
+        <div class="panel-content hidden" id="panel-fonts">
+          <h2>Fonts</h2>
+
+          <p style="text-align:center;">Font selector panel coming soon.</p>
         </div>
       </div>
+      
     </div>
   </body>
   

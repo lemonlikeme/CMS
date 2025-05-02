@@ -58,3 +58,24 @@ buttons.forEach(button => {
     }
   });
 });
+
+const tabs = document.querySelectorAll('.tab');
+const panels = document.querySelectorAll('.panel-content');
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    // Remove active state from all tabs
+    tabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+
+    // Show the matching panel, hide others
+    const target = tab.getAttribute('data-tab');
+    panels.forEach(panel => {
+      if (panel.id === `panel-${target}`) {
+        panel.classList.remove('hidden');
+      } else {
+        panel.classList.add('hidden');
+      }
+    });
+  });
+});
