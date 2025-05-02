@@ -4,19 +4,25 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Fonts</title>
-  <link rel="stylesheet" href="../Build Template v2/siteinfo.css" />
+  <link rel="stylesheet" href="../Build Template/siteinfo.css" />
 </head>
-<body class="page-colors">
+<body class="page-fonts">
+
   <div class="container">
+    
     <div class="left-panel">
       <div class="site-preview">
         <div class="preview-container">
           <div class="preview-card">
             <div class="preview-main">
-              <img src="/images/250x200.jpg" alt="Preview" class="preview-image"/>
+              <img src="../images/250x200.jpg" alt="Preview" class="preview-image" />
               <div class="preview-text">
                 <h2>More about our brand</h2>
-                <p>Inform individuals about your identity, the place from which you originate,<br> the methodology you employ in your work, or the sources of inspiration that drive you.<br> You have the capability to do this.</p>
+                <p>
+                  Inform individuals about your identity, the place from which you originate,<br>
+                  the methodology you employ in your work, or the sources of inspiration that drive you.<br>
+                  You have the capability to do this.
+                </p>
                 <button class="learn-more">LEARN MORE</button>
               </div>
             </div>
@@ -26,6 +32,7 @@
     </div>
 
     <div class="right-panel">
+      
       <div class="header">
         <div class="logo">Placeholder</div>
         <div class="close">✕</div>
@@ -36,7 +43,7 @@
         <p class="subtext">These custom fonts were curated by our designers. You can always change up your fonts later.</p>
 
         <div class="font-grid">
-          <!-- Professional -->
+
           <div class="font-set">
             <div class="font-title">Professional</div>
             <div class="font-group">
@@ -51,8 +58,7 @@
               </div>
             </div>
           </div>
-        
-          <!-- Playful -->
+
           <div class="font-set">
             <div class="font-title">Playful</div>
             <div class="font-group">
@@ -67,8 +73,7 @@
               </div>
             </div>
           </div>
-        
-          <!-- Sophisticated -->
+
           <div class="font-set">
             <div class="font-title">Sophisticated</div>
             <div class="font-group">
@@ -83,8 +88,7 @@
               </div>
             </div>
           </div>
-        
-          <!-- Friendly -->
+
           <div class="font-set">
             <div class="font-title">Friendly</div>
             <div class="font-group">
@@ -99,8 +103,7 @@
               </div>
             </div>
           </div>
-        
-          <!-- Bold -->
+
           <div class="font-set">
             <div class="font-title">Bold</div>
             <div class="font-group">
@@ -115,9 +118,8 @@
               </div>
             </div>
           </div>
-        
+
         </div>
-        
       </div>
 
       <div class="progress-container">
@@ -134,9 +136,12 @@
         <a href="colors.php" class="button-back">BACK</a>
         <a href="#" class="button-next">NEXT</a>
       </div>
-    </div>
-  </div>
-<script src="scripts.js"></script>
-  <script src="../jscripts/bTfont.js " defer></script>
+    </div> 
+
+  </div> 
+
+  <script src="scripts.js"></script>
+  <script src="../jscripts/bTfont.js" defer></script>
+
 </body>
 </html>

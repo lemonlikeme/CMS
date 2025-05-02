@@ -1,598 +1,596 @@
+/* ------------------------------------------------------------
+  ✅ Base Reset & Global Styles
+------------------------------------------------------------- */
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-  
-  html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    font-family: 'Helvetica Neue', sans-serif;
-  }
-  
-  .container {
-    display: flex;
-    height: 100vh;
-    width: 100vw;
-  }
-  
-  .left-panel {
-    flex: 1;
-    background-color: #e8e5e0;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-  }
-  
-  .left-content {
-    text-align: left;
-    padding: 3rem;
-    max-width: 550px;
-    animation: fadeInUp 0.8s ease-out;
-  }
-  
-  .left-content h1 {
-    font-size: 3.5rem;
-    font-weight: 800;
-    color: #111;
-    margin-bottom: 1rem;
-    line-height: 1.2;
-    letter-spacing: -0.5px;
-  }
-  
-  .left-content p {
-    font-size: 1.25rem;
-    font-weight: 400;
-    color: #333;
-    line-height: 1.7;
-    opacity: 0.85;
-  }
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-  .highlight {
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: 'Helvetica Neue', sans-serif;
+}
+
+/* ------------------------------------------------------------
+  🧱 Layout Container
+------------------------------------------------------------- */
+.container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* ------------------------------------------------------------
+   Left Panel (Animated Text + Messaging)
+------------------------------------------------------------- */
+.left-panel {
+  flex: 1;
+  background-color: #e8e5e0;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.left-content {
+  text-align: left;
+  padding: 3rem;
+  max-width: 550px;
+  animation: fadeInUp 0.8s ease-out;
+}
+
+.left-content h1 {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: #111;
+  margin-bottom: 1rem;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+.left-content p {
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: #333;
+  line-height: 1.7;
+  opacity: 0.85;
+}
+
+.highlight {
   background: linear-gradient(to right, #000, #555);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-  @keyframes fadeInUp {
-    0% {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }  
-  
-  .scroll-text {
-    position: absolute;
-    white-space: nowrap;
-    font-size: 5rem;
-    color: rgba(0, 0, 0, 0.4);
-    animation: scrollText 30s linear infinite;
-  }
-  
-  .text1 {
-    top: 10%;
-  }
+/* Scroll Text Animation */
+.scroll-text {
+  position: absolute;
+  white-space: nowrap;
+  font-size: 5rem;
+  color: rgba(0, 0, 0, 0.4);
+  animation: scrollText 30s linear infinite;
+}
 
-  .text2 {
-    animation: scrollTextReverse 30s linear infinite;
-    top: 30%;
-  }
+.text1 { top: 10%; }
+.text2 { animation: scrollTextReverse 30s linear infinite; top: 30%; }
+.text3 { top: 50%; }
+.text4 { animation: scrollTextReverse 30s linear infinite; top: 70%; }
 
-  .text3 {
-    top: 50%;
-  }
+/* Animation Keyframes */
+@keyframes scrollText {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
 
-  .text4 {
-    animation: scrollTextReverse 30s linear infinite;
-    top: 70%;
-  }
-  
-  @keyframes scrollText {
-    0% {
-      transform: translateX(100%);
-    }
-    100% {
-      transform: translateX(-100%);
-    }
-  }
+@keyframes scrollTextReverse {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
 
-  @keyframes scrollTextReverse {
-    0% {
-      transform: translateX(-100%);
-    }
-    100% {
-      transform: translateX(100%);
-    }
-  }
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
 
-  .page-pages .carousel-wrapper {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    padding-top: 1rem;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .page-pages .carousel-controls {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    padding: 1rem;
-    border-bottom: 1px solid #eee;
-    background: none; 
-  }
-  
-  .page-pages .carousel-controls button {
-    background-color: #111;
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    border-radius: 4px;
-  }
-  
-  .page-pages #carousel-title {
-    font-size: 1rem;
-    font-weight: 600;
-  }
-  
-  .page-pages .carousel-container {
-    flex: 1; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    position: relative;
-    width: 100%;
-  }
-  
-  .page-pages .carousel-card {
-    width: 80%;
-    max-width: 800px;
-    max-height: 1000px;
-    background: white;
-    border-radius: 1rem;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 1rem;
-    overflow-y: auto;
-    text-align: left;
-    font-size: 1rem;
-    line-height: 1.6;
-    color: #333;
-    transition: transform 0.3s ease;
-  }
-  
-  .page-pages .carousel-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
-  }
-  
-  .page-pages .description {
-    margin-top: 1rem;
-    font-size: 1rem;
-    line-height: 1.7;
-    color: #444;
-    text-align: left;
-  }
-  
-  .card-title {
-    font-size: 1.75rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    color: #222;
-  }
-  
-  .card-description {
-    font-size: 1.05rem;
-    line-height: 1.75;
-    color: #555;
-    white-space: pre-line;
-  }
+/* ------------------------------------------------------------
+   Right Panel (Form + Section Navigation)
+------------------------------------------------------------- */
+.right-panel {
+  width: 450px;
+  background-color: #fff;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  justify-content: space-between;
+}
 
-  .carousel-card img {
-    width: 100%;
-    height: auto;
-    border-radius: 12px;
-    margin-bottom: 1rem;
-  }
-  
-  .carousel-card p {
-    font-size: 1rem;
-    font-weight: 600;
-    margin: 0;
-    text-transform: capitalize;
-  }  
-  
-  .right-panel {
-    width: 450px;
-    background-color: #fff;
-    display: flex;
-    flex-direction: column;
-    padding: 2rem;
-    justify-content: space-between;
-  }
-  
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .logo {
-    font-weight: bold;
-  }
-  
-  .close {
-    font-weight: bold;
-    cursor: pointer;
-  }
-  
-  .content {
-    flex-grow: 1;
-    margin-top: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-  }
-  
-  .subtext {
-    font-size: 0.95rem;
-    color: #666;
-    line-height: 1.4;
-    margin-bottom: 1rem;
-  }
-  
-  .section-options {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .section-options label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.95rem;
-    font-weight: 500;
-    padding: 0.75rem 1rem;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.2s ease, border 0.2s ease;
-  }
-  
-  .section-options label:hover {
-    background-color: #f9f9f9;
-    border-color: #999;
-  }
-  
-  .section-options input[type="radio"] {
-    accent-color: #007bff;
-    cursor: pointer;
-  }  
-  
-  h1 {
-    font-size: 1.5rem;
-    margin-bottom: 2rem;
-  }
-  
-  .form-group {
-    margin-bottom: 2rem;
-  }
-  
-  label {
-    font-size: 0.9rem;
-    font-weight: 600;
-    display: block;
-    margin-bottom: 0.5rem;
-  }
-  
-  .note {
-    font-size: 0.85rem;
-    color: #555;
-    margin-bottom: 0.5rem;
-  }
-  
-  input[type="text"] {
-    width: 100%;
-    padding: 1rem;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .preview-img {
-    max-width: 90%;
-    max-height: 90%;
-    object-fit: contain;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  }
-  
-  .section-options {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 2rem;
-  }
-  
-  .section-options label {
-    font-size: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-  }
-  
-  input[type="radio"],
-  input[type="checkbox"] {
-    accent-color: black;
-    transform: scale(1.2);
-  }
-  
-  /* Progress Bar */
-  .progress-container {
-    margin: 1.5rem 0;
-  }
-  
-  .progress-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-  }
-  
-  .step {
-    flex: 1;
-    text-align: center;
-    font-size: 0.75rem;
-    color: #aaa;
-    position: relative;
-    transition: color 0.3s ease;
-  }
-  
-  .step::before {
-    content: '';
-    display: block;
-    height: 2px;
-    background-color: #ddd;
-    position: absolute;
-    top: -10px;
-    left: 0;
-    right: 0;
-    transform: scaleX(0);
-    transform-origin: var(--origin, left);
-    transition: transform 0.4s ease, background-color 0.3s ease;
-    z-index: 1;
-  }
-  
-  .step.active {
-    color: black;
-    font-weight: bold;
-  }
-  
-  .step.completed {
-    color: green;
-  }
-  
-  .step.done::before  {
-    background-color: black;
-    transform: scaleX(1);
-  }
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
-  .step.done::after {
-    content: '✓';
-    position: absolute;
-    top: -30px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 0.9rem;
-    color: green;
-    z-index: 3;
-  }
-  
-  .step.active::before {
-    background-color: black;
-    transform: scaleX(1);
-  }  
-  
-  .nav-tabs {
-    display: flex;
-    gap: 1.2rem;
-    font-size: 0.8rem;
-    color: #aaa;
-  }
-  
-  .nav-tabs .active {
-    font-weight: bold;
-    color: #000;
-    border-bottom: 2px solid #000;
-    padding-bottom: 0.2rem;
-  }
-  
-  .button-next, .button-back{
-    padding: 0.75rem 1.5rem;
-    font-weight: bold;
-    font-size: 1rem;
-    border: none;
-    background: linear-gradient(120deg, #eee, #eee) left / 0% 100% no-repeat;
-    background-color: #fff;
-    transition: all 0.4s ease;
-    cursor: pointer;
-    border: 1px solid #ccc;
-    color: #111;
-    position: relative;
-    z-index: 1;
-    overflow: hidden;
-  }
-  
-  .button-next:hover, .button-back:hover{
-    background: #333;
-    color: white;
-  }
-  
-  .button-container {
-    display: flex;
-    gap: 195px;
-    justify-content: flex-end;
-  }
-  .page-colors .content {
-    margin-top: 2rem;
-  }
+.logo, .close {
+  font-weight: bold;
+}
 
-  .site-preview {
-    margin-top: 2rem;
-  }
+.close {
+  cursor: pointer;
+}
 
-  .preview-container {
-    background-color: #f8f9fa;
-    padding: 2rem;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  }
+.content {
+  flex-grow: 1;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
 
-  .preview-main {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 2rem;
-    align-items: flex-start;
-  }
+.subtext {
+  font-size: 0.95rem;
+  color: #666;
+  line-height: 1.4;
+  margin-bottom: 1rem;
+}
 
-  .preview-image {
-    width: 250px;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 8px;
-    background-color: #f0f0f0;
-  }
+/* ------------------------------------------------------------
+   Section Options (Checkboxes / Radios)
+------------------------------------------------------------- */
+.section-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2rem;
+}
 
-  .preview-text h2 {
-    font-size: 1.4rem;
-    margin-bottom: 0.5rem;
-  }
+.section-options label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease, border 0.2s ease;
+}
 
-  .preview-text p {
-    font-size: 0.95rem;
-    color: #333;
-    margin-bottom: 1rem;
-    line-height: 1.4;
-  }
+.section-options label:hover {
+  background-color: #f9f9f9;
+  border-color: #999;
+}
 
-  .learn-more {
-    padding: 0.7rem 1.4rem;
-    border-radius: 999px;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-    transition: background 0.3s ease, color 0.3s ease;
-  }
+.section-options input[type="radio"],
+.section-options input[type="checkbox"] {
+  accent-color: black;
+  transform: scale(1.2);
+  cursor: pointer;
+}
 
-  .preview-footer h3 {
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-  }
+/* ------------------------------------------------------------
+   Forms and Labels
+------------------------------------------------------------- */
+h1 {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+}
 
-  .social-preview {
-    display: flex;
-    gap: 0.5rem;
-  }
+.form-group {
+  margin-bottom: 2rem;
+}
 
-  .social-box {
-    width: 50px;
-    height: 50px;
-    background-color: #e0e0e0;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.3s ease;
-  }
+label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.5rem;
+}
 
-  .social-box img {
-    width: 24px;
-    height: 24px;
-    filter: invert(1);
-  }
+.note {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
 
-  .social-box.facebook {
-    background-color: #1877f2;
-  }
+input[type="text"] {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
 
-  .social-box.instagram {
-    background-color: #e1306c;
-  }
+/* ------------------------------------------------------------
+   Carousel (Page 3 - Pages)
+------------------------------------------------------------- */
+.page-pages .carousel-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+}
 
-  .social-box.twitter {
-    background-color: #000000;
-  }
+.page-pages .carousel-controls {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+  background: none;
+}
 
-  .palette-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 2rem;
-  }
+.page-pages .carousel-controls button {
+  background-color: #111;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 4px;
+}
 
-  .palette-set {
-    display: flex;
-    flex-direction: column;
-  }
+.page-pages #carousel-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
 
-  .palette-title {
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 0.4rem;
-  }
+.page-pages .carousel-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
 
-  .palette-group {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-  }
+.page-pages .carousel-card {
+  width: 80%;
+  max-width: 800px;
+  max-height: 1000px;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1rem;
+  overflow-y: auto;
+  text-align: left;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #333;
+  transition: transform 0.3s ease;
+}
 
-  .palette {
-    display: flex;
-    width: 80px;
-    height: 32px;
-    border-radius: 999px;
-    overflow: hidden;
-    border: 2px solid transparent;
-    cursor: pointer;
-    transition: transform 0.2s ease, border-color 0.2s ease;
-    z-index: 1;
-  }
-  
-  .palette:hover {
-    transform: scale(1.05);
-  }
-  
-  .palette.selected {
-    border-color: black;
-    transform: scale(1.05);
-  }
-  
-  .palette-color {
-    width: 100%;
-    height: 100%;
-    flex: 1;
-    border-right: 1px solid #ccc;
-    box-sizing: border-box;
-  }
-  
+.page-pages .carousel-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+}
+
+.carousel-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+.card-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: #222;
+}
+
+.card-description {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: #555;
+  white-space: pre-line;
+}
+
+/* ------------------------------------------------------------
+   Navigation Tabs & Buttons
+------------------------------------------------------------- */
+.nav-tabs {
+  display: flex;
+  gap: 1.2rem;
+  font-size: 0.8rem;
+  color: #aaa;
+}
+
+.nav-tabs .active {
+  font-weight: bold;
+  color: #000;
+  border-bottom: 2px solid #000;
+  padding-bottom: 0.2rem;
+}
+
+.button-next, .button-back {
+  padding: 0.75rem 1.5rem;
+  font-weight: bold;
+  font-size: 1rem;
+  border: none;
+  background: linear-gradient(120deg, #eee, #eee) left / 0% 100% no-repeat;
+  background-color: #fff;
+  transition: all 0.4s ease;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  color: #111;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.button-next:hover, .button-back:hover {
+  background: #333;
+  color: white;
+}
+
+.button-container {
+  display: flex;
+  gap: 195px;
+  justify-content: flex-end;
+}
+
+/* ------------------------------------------------------------
+  Progress Bar
+------------------------------------------------------------- */
+.progress-container {
+  margin: 1.5rem 0;
+}
+
+.progress-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+}
+
+.step {
+  flex: 1;
+  text-align: center;
+  font-size: 0.75rem;
+  color: #aaa;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.step::before {
+  content: '';
+  display: block;
+  height: 2px;
+  background-color: #ddd;
+  position: absolute;
+  top: -10px;
+  left: 0;
+  right: 0;
+  transform: scaleX(0);
+  transform-origin: var(--origin, left);
+  transition: transform 0.4s ease, background-color 0.3s ease;
+  z-index: 1;
+}
+
+.step.active {
+  color: black;
+  font-weight: bold;
+}
+
+.step.completed {
+  color: green;
+}
+
+.step.done::before {
+  background-color: black;
+  transform: scaleX(1);
+}
+
+.step.done::after {
+  content: '✓';
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.9rem;
+  color: green;
+  z-index: 3;
+}
+
+.step.active::before {
+  background-color: black;
+  transform: scaleX(1);
+}
+
+/* ------------------------------------------------------------
+   Colors Page – Palette Selection
+------------------------------------------------------------- */
+.page-colors .content {
+  margin-top: 2rem;
+}
+
+.palette-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.palette-set {
+  display: flex;
+  flex-direction: column;
+}
+
+.palette-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+.palette-group {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.palette {
+  display: flex;
+  width: 80px;
+  height: 32px;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.palette:hover {
+  transform: scale(1.05);
+}
+
+.palette.selected {
+  border-color: black;
+  transform: scale(1.05);
+}
+
+.palette-color {
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  border-right: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+/* ------------------------------------------------------------
+   Site Preview Panel
+------------------------------------------------------------- */
+.site-preview {
+  margin-top: 2rem;
+}
+
+.preview-container {
+  background-color: #f8f9fa;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.preview-main {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  align-items: flex-start;
+}
+
+.preview-image {
+  width: 250px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+}
+
+.preview-text h2 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.preview-text p {
+  font-size: 0.95rem;
+  color: #333;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.learn-more {
+  padding: 0.7rem 1.4rem;
+  border-radius: 999px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Preview Footer – Social */
+.preview-footer h3 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.social-preview {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.social-box {
+  width: 50px;
+  height: 50px;
+  background-color: #e0e0e0;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.social-box img {
+  width: 24px;
+  height: 24px;
+  filter: invert(1);
+}
+
+.social-box.facebook { background-color: #1877f2; }
+.social-box.instagram { background-color: #e1306c; }
+.social-box.twitter { background-color: #000000; }
+
+/* ------------------------------------------------------------
+   Fonts Page – Font Picker
+------------------------------------------------------------- */
+body.page-fonts .font {
+  border: 2px solid transparent;
+  border-radius: 12px;
+  padding: 12px;
+  margin: 10px;
+  background: linear-gradient(135deg, #f9f9f9, #f0f0f0);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex: 1 1 150px;
+  min-width: 140px;
+  max-width: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body.page-fonts .font:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+body.page-fonts .font.selected {
+  border-color: #007BFF;
+  background: linear-gradient(135deg, #e6f0ff, #ffffff);
+}
+
+body.page-fonts .font-preview {
+  font-size: 18px;
+  color: #333;
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}

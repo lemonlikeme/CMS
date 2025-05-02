@@ -146,3 +146,16 @@ function showCurrentCard() {
     card.style.display = i === currentIndex ? 'block' : 'none';
   });
 }
+
+function changeFont(fontName) {
+  document.querySelectorAll('.font').forEach(el => el.classList.remove('selected'));
+  const fonts = document.querySelectorAll('.font-preview');
+  fonts.forEach(preview => {
+    if (preview.textContent === fontName || preview.style.fontFamily.includes(fontName)) {
+      preview.parentElement.classList.add('selected');
+    }
+  });
+
+  // Apply font (update your preview area or app logic here)
+  document.querySelector('.canvas-preview')?.style.fontFamily = fontName;
+}

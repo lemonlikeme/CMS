@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Colors</title>
-  <link rel="stylesheet" href="../Build Template v2/siteinfo.css" />
+  <link rel="stylesheet" href="../Build Template/siteinfo.css" />
 </head>
 <body class="page-colors">
   <div class="container">
