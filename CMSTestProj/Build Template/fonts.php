@@ -174,7 +174,7 @@ if (isset($_GET['selectedColor'])) {
         <form action="colors.php" method="get">
           <button type="submit" class="button-back">BACK</button>
         </form>
-        <form action="/CMS/CMS/CMSTestProj/Build Template/builder/builder.html" method="get" id="fontForm">
+        <form action="/CMS/CMS/CMSTestProj/Build Template/builder/asset_manager.php" method="get" id="fontForm">
           <input type="hidden" name="selectedFont" id="selectedFont" value="">
           <input type="hidden" name="selectedColor" value="<?php echo htmlspecialchars($_GET['selectedColor'] ?? ''); ?>">
           <button type="submit" class="button-next">NEXT</button>
