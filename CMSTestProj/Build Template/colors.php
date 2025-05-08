@@ -1,38 +1,31 @@
+<!-- colors.php -->
+<?php
+// You can include any shared PHP setup logic here if needed
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Colors</title>
-  <link rel="stylesheet" href="../Build Template/siteinfo.css" />
+  <link rel="stylesheet" href="test.css" />
 </head>
-<body class="page-colors">
+<body class="colors-preview">
   <div class="container">
     <div class="left-panel">
       <div class="site-preview">
-        <div class="preview-container">
+        <div class="preview-container colors-preview">
           <div class="preview-card">
             <div class="preview-main">
-              <img src="/images/250x200.jpg" alt="Preview" class="preview-image"/>
+              <img src="images/250x200.jpg" alt="Preview" class="preview-image"/>
               <div class="preview-text">
-                <h2 class"pv-text">More about our brand</h2>
-                <p class"pv-text">Inform individuals about your identity, the place from which you originate,<br> the methodology you employ in your work, or the sources of inspiration that drive you.<br> You have the capability to do this.</p>
+                <h2 class="pv-text">More about our brand</h2>
+                <p class="pv-text">
+                  Inform individuals about your identity, the place from which you originate,
+                  the methodology you employ in your work, or the sources of inspiration that drive you.
+                  You have the capability to do this.
+                </p>
                 <button class="learn-more">LEARN MORE</button>
-              </div>
-            </div>
-            
-            <div class="preview-footer">
-              <h3 class"pv-text">Follow us on social</h3>
-              <div class="social-preview">
-                <div class="social-box facebook">
-                  <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/facebook.svg" alt="Facebook">
-                </div>
-                <div class="social-box instagram">
-                  <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/instagram.svg" alt="Instagram">
-                </div>
-                <div class="social-box twitter">
-                  <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg" alt="X">
-                </div>
               </div>
             </div>
           </div>
@@ -43,7 +36,9 @@
     <div class="right-panel">
       <div class="header">
         <div class="logo">Placeholder</div>
-        <div class="close">✕</div>
+        <form action="../Get Started/get_Started.php" method="get">
+          <button type="submit" class="close">✕</button>
+        </form>
       </div>
 
       <div class="content">
@@ -56,114 +51,111 @@
             <div class="palette-title">Professional</div>
             <div class="palette-group">
               <div class="palette">
+                <div class="palette-color" style="background: #ffffff;"></div>
+                <div class="palette-color" style="background: #2c3e50;"></div>
+                <div class="palette-color" style="background: #34495e;"></div>
+              </div>
+              <div class="palette">
+                <div class="palette-color" style="background: #f8f9fa;"></div>
+                <div class="palette-color" style="background: #1a237e;"></div>
+                <div class="palette-color" style="background: #0d47a1;"></div>
+              </div>
+              <div class="palette">
                 <div class="palette-color" style="background: #f5f5f5;"></div>
-                <div class="palette-color" style="background: #222;"></div>
-                <div class="palette-color" style="background: #aaa;"></div>
-              </div>
-              <div class="palette">
-                <div class="palette-color" style="background: #2d6a4f;"></div>
-                <div class="palette-color" style="background: #1b4332;"></div>
-                <div class="palette-color" style="background: #081c15;"></div>
-              </div>
-              <div class="palette">
-                <div class="palette-color" style="background: #1e1e1e;"></div>
-                <div class="palette-color" style="background: #3d5a80;"></div>
-                <div class="palette-color" style="background: #dbeafe;"></div>
+                <div class="palette-color" style="background: #263238;"></div>
+                <div class="palette-color" style="background: #37474f;"></div>
               </div>
             </div>
           </div>
-        
+
           <!-- Playful -->
           <div class="palette-set">
             <div class="palette-title">Playful</div>
             <div class="palette-group">
               <div class="palette">
-                <div class="palette-color" style="background: #dcd6f7;"></div>
-                <div class="palette-color" style="background: #a10300;"></div>
-                <div class="palette-color" style="background: #f6f1f1;"></div>
+                <div class="palette-color" style="background: #fff8e1;"></div>
+                <div class="palette-color" style="background: #ff6f00;"></div>
+                <div class="palette-color" style="background: #bf360c;"></div>
               </div>
               <div class="palette">
-                <div class="palette-color" style="background: #f6bd60;"></div>
-                <div class="palette-color" style="background: #f7ede2;"></div>
-                <div class="palette-color" style="background: #84a59d;"></div>
+                <div class="palette-color" style="background: #e8f5e9;"></div>
+                <div class="palette-color" style="background: #2e7d32;"></div>
+                <div class="palette-color" style="background: #1b5e20;"></div>
               </div>
               <div class="palette">
-                <div class="palette-color" style="background: #caf0f8;"></div>
-                <div class="palette-color" style="background: #90e0ef;"></div>
-                <div class="palette-color" style="background: #0077b6;"></div>
+                <div class="palette-color" style="background: #e3f2fd;"></div>
+                <div class="palette-color" style="background: #1565c0;"></div>
+                <div class="palette-color" style="background: #0d47a1;"></div>
               </div>
             </div>
           </div>
-        
+
           <!-- Sophisticated -->
           <div class="palette-set">
             <div class="palette-title">Sophisticated</div>
             <div class="palette-group">
               <div class="palette">
-                <div class="palette-color" style="background: #e5e5dc;"></div>
-                <div class="palette-color" style="background: #7d7461;"></div>
-                <div class="palette-color" style="background: #d5c4a1;"></div>
+                <div class="palette-color" style="background: #fafafa;"></div>
+                <div class="palette-color" style="background: #424242;"></div>
+                <div class="palette-color" style="background: #212121;"></div>
               </div>
               <div class="palette">
-                <div class="palette-color" style="background: #d4a373;"></div>
-                <div class="palette-color" style="background: #e6ccb2;"></div>
-                <div class="palette-color" style="background: #6c584c;"></div>
+                <div class="palette-color" style="background: #f5f5f5;"></div>
+                <div class="palette-color" style="background: #455a64;"></div>
+                <div class="palette-color" style="background: #263238;"></div>
               </div>
               <div class="palette">
-                <div class="palette-color" style="background: #c0c0c0;"></div>
-                <div class="palette-color" style="background: #999;"></div>
-                <div class="palette-color" style="background: #555;"></div>
+                <div class="palette-color" style="background: #fafafa;"></div>
+                <div class="palette-color" style="background: #3e2723;"></div>
+                <div class="palette-color" style="background: #1b0000;"></div>
               </div>
             </div>
           </div>
-        
+
           <!-- Friendly -->
           <div class="palette-set">
             <div class="palette-title">Friendly</div>
             <div class="palette-group">
               <div class="palette">
-                <div class="palette-color" style="background: #5fa8d3;"></div>
-                <div class="palette-color" style="background: #1b4965;"></div>
-                <div class="palette-color" style="background: #cae9ff;"></div>
+                <div class="palette-color" style="background: #e8f5e9;"></div>
+                <div class="palette-color" style="background: #43a047;"></div>
+                <div class="palette-color" style="background: #1b5e20;"></div>
               </div>
               <div class="palette">
-                <div class="palette-color" style="background: #f9f871;"></div>
-                <div class="palette-color" style="background: #e0e0e0;"></div>
-                <div class="palette-color" style="background: #a3c9a8;"></div>
+                <div class="palette-color" style="background: #fff3e0;"></div>
+                <div class="palette-color" style="background: #e65100;"></div>
+                <div class="palette-color" style="background: #bf360c;"></div>
               </div>
               <div class="palette">
-                <div class="palette-color" style="background: #f4f1de;"></div>
-                <div class="palette-color" style="background: #e07a5f;"></div>
-                <div class="palette-color" style="background: #3d405b;"></div>
+                <div class="palette-color" style="background: #e3f2fd;"></div>
+                <div class="palette-color" style="background: #1976d2;"></div>
+                <div class="palette-color" style="background: #0d47a1;"></div>
               </div>
             </div>
           </div>
-        
+
           <!-- Bold -->
           <div class="palette-set">
             <div class="palette-title">Bold</div>
             <div class="palette-group">
               <div class="palette">
-                <div class="palette-color" style="background: #fcbf49;"></div>
-                <div class="palette-color" style="background: #ff6f00;"></div>
-                <div class="palette-color" style="background: #212529;"></div>
+                <div class="palette-color" style="background: #ffffff;"></div>
+                <div class="palette-color" style="background: #d32f2f;"></div>
+                <div class="palette-color" style="background: #b71c1c;"></div>
               </div>
               <div class="palette">
-                <div class="palette-color" style="background: #adb5bd;"></div>
-                <div class="palette-color" style="background: #4361ee;"></div>
-                <div class="palette-color" style="background: #b5179e;"></div>
+                <div class="palette-color" style="background: #f5f5f5;"></div>
+                <div class="palette-color" style="background: #6a1b9a;"></div>
+                <div class="palette-color" style="background: #4a148c;"></div>
               </div>
               <div class="palette">
-                <div class="palette-color" style="background: #ef476f;"></div>
-                <div class="palette-color" style="background: #ffd166;"></div>
-                <div class="palette-color" style="background: #06d6a0;"></div>
+                <div class="palette-color" style="background: #fafafa;"></div>
+                <div class="palette-color" style="background: #c2185b;"></div>
+                <div class="palette-color" style="background: #880e4f;"></div>
               </div>
             </div>
           </div>
-        
         </div>
-        
-                     
       </div>
 
       <div class="progress-container">
@@ -177,15 +169,18 @@
       </div>
 
       <div class="button-container">
-        <a href="pages.php" class="button-back">BACK</a>
-        <a href="fonts.php" class="button-next">NEXT</a>
+        <form action="pages.php" method="get">
+          <button type="submit" class="button-back">BACK</button>
+        </form>
+        <form action="fonts.php" method="get" id="colorForm">
+          <input type="hidden" name="selectedColor" id="selectedColor" value="">
+          <button type="submit" class="button-next">NEXT</button>
+        </form>
       </div>
     </div>
   </div>
 
   <script src="scripts.js"></script>
   <script src="../jscripts/bTcolor.js" defer></script>
-
-
 </body>
 </html>

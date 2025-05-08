@@ -1,5 +1,5 @@
 /* ------------------------------------------------------------
-  ✅ Base Reset & Global Styles
+   Base Reset & Global Styles
 ------------------------------------------------------------- */
 * {
   box-sizing: border-box;
@@ -15,12 +15,19 @@ html, body {
 }
 
 /* ------------------------------------------------------------
-  🧱 Layout Container
+   Layout Container
 ------------------------------------------------------------- */
 .container {
   display: flex;
   height: 100vh;
   width: 100vw;
+}
+
+.canvas {
+  width: 70%;
+  height: 100vh;
+  background: #f8f8f8;
+  /* your canvas styles */
 }
 
 /* ------------------------------------------------------------
@@ -100,12 +107,12 @@ html, body {
    Right Panel (Form + Section Navigation)
 ------------------------------------------------------------- */
 .right-panel {
-  width: 450px;
+  width: 30%;
+  height: 100vh;
+  overflow-y: auto; /* enables vertical scrolling */
+  padding: 20px;
+  box-sizing: border-box;
   background-color: #fff;
-  display: flex;
-  flex-direction: column;
-  padding: 2rem;
-  justify-content: space-between;
 }
 
 .header {
@@ -341,9 +348,10 @@ input[type="text"] {
 
 .button-container {
   display: flex;
-  gap: 195px;
-  justify-content: flex-end;
+  justify-content: space-between;
+  padding: 1rem 2rem;
 }
+  
 
 /* ------------------------------------------------------------
   Progress Bar
@@ -418,7 +426,11 @@ input[type="text"] {
 ------------------------------------------------------------- */
 .page-colors .content {
   margin-top: 2rem;
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
 }
+
 
 .palette-grid {
   display: flex;
@@ -455,6 +467,16 @@ input[type="text"] {
   transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
+.palette-section {
+  flex: 1;
+}
+
+.preview-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
 .palette:hover {
   transform: scale(1.05);
 }
@@ -476,7 +498,7 @@ input[type="text"] {
    Site Preview Panel
 ------------------------------------------------------------- */
 .site-preview {
-  margin-top: 2rem;
+  margin-top: 0;
 }
 
 .preview-container {
@@ -594,3 +616,5 @@ body.page-fonts .font-preview {
   text-overflow: ellipsis;
   width: 100%;
 }
+
+
