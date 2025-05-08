@@ -1,62 +1,105 @@
+<?php
+// You can add any necessary PHP logic here (like session management if needed)
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pages</title>
-  <link rel="stylesheet" href="siteinfo.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Select Pages</title>
+    <link rel="stylesheet" href="test.css" />
 </head>
-<body class="page-pages">
-  <div class="container">
-    <div class="left-panel">
-      <div class="carousel-wrapper">
-        <div class="carousel-controls">
-          <button id="carousel-prev">←</button>
-          <span id="carousel-title">Selected Pages</span>
-          <button id="carousel-next">→</button>
+<body>
+    <div class="container">
+        <!-- Left Panel - Preview -->
+        <div class="left-panel">
+            <div class="left-content">
+                <h1>Select your <span class="highlight">pages</span></h1>
+                <p>Choose the pages you want to include in your website. Each page comes with its own set of features and functionality.</p>
+            </div>
         </div>
 
-        <div class="carousel-container" id="carousel-container"></div>
-      </div>
-    </div>
+        <!-- Right Panel - Selection -->
+        <div class="right-panel">
+            <div class="header">
+                <div class="logo">Placeholder</div>
+                <form action="../Get Started/get_Started.php" method="get">
+                    <button type="submit" class="close">✕</button>
+                </form>
+            </div>
 
-    <div class="right-panel">
-      <div class="header">
-        <div class="logo">Placeholder</div>
-        <div class="close">✕</div>
-      </div>
+            <div class="content">
+                <h1>Select Your Pages</h1>
+                <p class="subtext">Choose the pages you want to include in your website</p>
 
-      <div class="content">
-        <h1>Add pages to your site</h1>
-        <p class="subtext">We recommend starting with these, but you can always add or remove pages later.</p>
+                <div class="page-options">
+                    <label class="page-option">
+                        <input type="checkbox" value="about">
+                        <div class="option-content">
+                            <img src="images/about.jpg" alt="About">
+                            <span>About</span>
+                        </div>
+                    </label>
+                    <label class="page-option">
+                        <input type="checkbox" value="contact">
+                        <div class="option-content">
+                            <img src="images/contact.jpg" alt="Contact">
+                            <span>Contact</span>
+                        </div>
+                    </label>
+                    <label class="page-option">
+                        <input type="checkbox" value="shop">
+                        <div class="option-content">
+                            <img src="images/shop.jpg" alt="Shop">
+                            <span>Shop</span>
+                        </div>
+                    </label>
+                    <label class="page-option">
+                        <input type="checkbox" value="services">
+                        <div class="option-content">
+                            <img src="images/services.jpg" alt="Services">
+                            <span>Services</span>
+                        </div>
+                    </label>
+                    <label class="page-option">
+                        <input type="checkbox" value="appointments">
+                        <div class="option-content">
+                            <img src="images/appointments.jpg" alt="Appointments">
+                            <span>Appointments</span>
+                        </div>
+                    </label>
+                    <label class="page-option">
+                        <input type="checkbox" value="course">
+                        <div class="option-content">
+                            <img src="images/course.jpg" alt="Course">
+                            <span>Course</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
 
-        <div class="section-options">
-          <label><input type="checkbox" value="about"> About</label>
-          <label><input type="checkbox" value="contact"> Contact</label>
-          <label><input type="checkbox" value="shop"> Shop</label>
-          <label><input type="checkbox" value="services"> Services</label>
-          <label><input type="checkbox" value="appointments"> Appointments</label>
-          <label><input type="checkbox" value="course"> Course</label>
-        </div>        
-      </div>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="step done">Site Info</div>
+                    <div class="step done">Homepage</div>
+                    <div class="step active">Pages</div>
+                    <div class="step">Colors</div>
+                    <div class="step">Fonts</div>
+                </div>
+            </div>
 
-      <div class="progress-container">
-        <div class="progress-bar">
-          <div class="step done">Site Info</div>
-          <div class="step done">Homepage</div>
-          <div class="step active">Pages</div>
-          <div class="step">Colors</div>
-          <div class="step">Fonts</div>
+            <div class="button-container">
+                <form action="homepage.php" method="get">
+                    <button type="submit" class="button-back">BACK</button>
+                </form>
+                <form action="colors.php" method="get">
+                    <button type="submit" class="button-next">NEXT</button>
+                </form>
+            </div>
         </div>
-      </div>
-
-      <div class="button-container">
-        <a href="homepage.php" class="button-back">BACK</a>
-        <a href="colors.php" class="button-next">NEXT</a>
-      </div>
     </div>
-  </div>
 
-  <script src="scripts.js"></script>
+    <script src="scripts.js"></script>
 </body>
 </html>

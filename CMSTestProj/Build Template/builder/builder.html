@@ -9,7 +9,6 @@
 </head>
 <body>
     <div class="builder-wrapper">
-
       <div class="canvas-preview" id="canvas">
         <p class="placeholder">Click elements on the right to add them to your site layout.</p>
       </div>
@@ -66,18 +65,97 @@
       
         <div class="panel-content hidden" id="panel-colors">
           <h2>Colors</h2>
+          <div class="color-panel">
+            <div class="selected-colors">
+              <h3 class="color-title">Preferred Colors</h3>
+              <div class="color-grid" id="selectedColorsGrid">
+                <!-- Selected colors will be populated here -->
+              </div>
+            </div>
 
-          <p style="text-align:center;">Color settings panel coming soon.</p>
+            <div class="color-picker-section">
+              <h3 class="color-title">Custom Colors</h3>
+              <div class="color-picker-group">
+                <label class="color-picker-label">Background Color</label>
+                <div class="color-picker-wrapper" data-color="#ffffff">
+                  <input type="color" class="color-picker" id="bgColorPicker" value="#ffffff">
+                </div>
+              </div>
+              <div class="color-picker-group">
+                <label class="color-picker-label">Text Color</label>
+                <div class="color-picker-wrapper" data-color="#333333">
+                  <input type="color" class="color-picker" id="textColorPicker" value="#333333">
+                </div>
+              </div>
+              <div class="color-picker-group">
+                <label class="color-picker-label">Accent Color</label>
+                <div class="color-picker-wrapper" data-color="#000000">
+                  <input type="color" class="color-picker" id="accentColorPicker" value="#000000">
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       
         <div class="panel-content hidden" id="panel-fonts">
           <h2>Fonts</h2>
-
           <p style="text-align:center;">Font selector panel coming soon.</p>
         </div>
       </div>
-      
     </div>
-  </body>
-  
+
+    <script>
+      // Get URL parameters
+      const urlParams = new URLSearchParams(window.location.search);
+      const selectedColors = urlParams.get('selectedColor') ? JSON.parse(decodeURIComponent(urlParams.get('selectedColor'))) : [];
+
+      // Populate selected colors
+      const selectedColorsGrid = document.getElementById('selectedColorsGrid');
+      if (selectedColors.length > 0) {
+        const colorLabels = ['Background', 'Text', 'Accent'];
+        selectedColors.forEach((color, index) => {
+          const colorItem = document.createElement('div');
+          colorItem.className = 'color-item';
+          colorItem.innerHTML = `
+            <div class="color-preview" style="background-color: ${color}"></div>
+            <span class="color-label">${colorLabels[index]}</span>
+          `;
+          selectedColorsGrid.appendChild(colorItem);
+        });
+      }
+
+      // Color picker functionality
+      const colorPickers = document.querySelectorAll('.color-picker');
+      colorPickers.forEach(picker => {
+        const wrapper = picker.closest('.color-picker-wrapper');
+        
+        // Update the color preview and value display
+        const updateColor = (color) => {
+          wrapper.style.setProperty('--current-color', color);
+          wrapper.setAttribute('data-color', color);
+        };
+
+        // Handle color changes
+        picker.addEventListener('input', (e) => {
+          updateColor(e.target.value);
+        });
+
+        // Initial color value
+        updateColor(picker.value);
+
+        // Add click animation
+        picker.addEventListener('mousedown', () => {
+          wrapper.style.transform = 'scale(0.98)';
+        });
+
+        picker.addEventListener('mouseup', () => {
+          wrapper.style.transform = 'scale(1)';
+        });
+
+        picker.addEventListener('mouseleave', () => {
+          wrapper.style.transform = 'scale(1)';
+        });
+      });
+    </script>
+</body>
 </html>
