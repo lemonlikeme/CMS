@@ -476,16 +476,37 @@ document.addEventListener('DOMContentLoaded', function() {
             headerElement.dataset.bgColor = state.header.styles.bgColor;
             headerElement.dataset.textColor = state.header.styles.textColor;
             
-            // Update header title and logo
-            const headerTitle = header.querySelector('[data-editable="header_title"]');
-            if (headerTitle) {
-                headerTitle.textContent = state.header.title;
-            }
-            const headerLogo = header.querySelector('[data-editable="header_logo"]');
-            if (headerLogo) {
-                headerLogo.src = state.header.logo;
-            }
+            // Add edit button to header
+            const headerControls = document.createElement('div');
+            headerControls.className = 'asset-controls';
+            headerControls.innerHTML = `
+                <button class="edit-btn" title="Edit Header">✎</button>
+            `;
+            headerControls.querySelector('.edit-btn').addEventListener('click', () => {
+                showHeaderFooterProperties();
+            });
+            headerElement.appendChild(headerControls);
         }
+        
+        const headerLogo = header.querySelector('[data-editable="header_logo"]');
+        const headerTitle = header.querySelector('[data-editable="header_title"]');
+        const navLinks = header.querySelectorAll('[data-editable^="nav_"]');
+        
+        if (headerLogo) headerLogo.src = state.header.logo;
+        if (headerTitle) {
+            headerTitle.textContent = state.header.title;
+            headerTitle.dataset.textColor = state.header.styles.textColor;
+        }
+        
+        navLinks.forEach(link => {
+            const key = link.dataset.editable.replace('nav_', '');
+            if (state.header.nav[key]) {
+                link.textContent = state.header.nav[key];
+                link.dataset.navColor = state.header.styles.navColor;
+                link.dataset.navHoverColor = state.header.styles.navHoverColor;
+            }
+        });
+        
         preview.appendChild(header);
 
         // Create main content container
@@ -574,25 +595,29 @@ document.addEventListener('DOMContentLoaded', function() {
             footerElement.classList.add('footer-styled');
             footerElement.dataset.bgColor = state.footer.styles.bgColor;
             footerElement.dataset.textColor = state.footer.styles.textColor;
-
-            // Update footer contact information
-            const footerContactTitle = footer.querySelector('[data-editable="footer_contact_title"]');
-            if (footerContactTitle) {
-                footerContactTitle.textContent = state.footer.contact.title;
-            }
-            const footerAddress = footer.querySelector('[data-editable="footer_address"]');
-            if (footerAddress) {
-                footerAddress.textContent = state.footer.contact.address;
-            }
-            const footerPhone = footer.querySelector('[data-editable="footer_phone"]');
-            if (footerPhone) {
-                footerPhone.textContent = state.footer.contact.phone;
-            }
-            const footerEmail = footer.querySelector('[data-editable="footer_email"]');
-            if (footerEmail) {
-                footerEmail.textContent = state.footer.contact.email;
-            }
+            
+            // Add edit button to footer
+            const footerControls = document.createElement('div');
+            footerControls.className = 'asset-controls';
+            footerControls.innerHTML = `
+                <button class="edit-btn" title="Edit Footer">✎</button>
+            `;
+            footerControls.querySelector('.edit-btn').addEventListener('click', () => {
+                showHeaderFooterProperties();
+            });
+            footerElement.appendChild(footerControls);
         }
+        
+        const footerElements = footer.querySelectorAll('[data-editable]');
+        footerElements.forEach(element => {
+            const key = element.dataset.editable;
+            const [section, field] = key.split('_');
+            
+            if (state.footer[section] && state.footer[section][field]) {
+                element.textContent = state.footer[section][field];
+                element.dataset.textColor = state.footer.styles.textColor;
+            }
+        });
 
         // Update footer links
         const footerLinks = footer.querySelectorAll('a');
