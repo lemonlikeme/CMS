@@ -1,5 +1,18 @@
 <?php
-// You can add any necessary PHP logic here (like session management if needed)
+session_start();
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Collect all checked sections
+    $sections = [];
+    foreach ($_POST as $key => $value) {
+        if (strpos($key, 'section-') === 0) {
+            $sections[] = $key;
+        }
+    }
+    $_SESSION['homepage_sections'] = $sections;
+    header("Location: pages.php");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>

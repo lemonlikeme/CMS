@@ -105,15 +105,15 @@ if (isset($_GET['selectedColor'])) {
           <div class="font-set">
             <div class="font-title">Modern</div>
             <div class="font-group">
-              <div class="font-option" data-font="helvetica">
+              <div class="font-option" data-font="helvetica" onclick="changeFont('Helvetica')">
                 <span class="font-name">Helvetica Neue</span>
                 <span class="font-preview font-helvetica">The quick brown fox jumps over the lazy dog</span>
               </div>
-              <div class="font-option" data-font="roboto">
+              <div class="font-option" data-font="roboto" onclick="changeFont('Roboto')">
                 <span class="font-name">Roboto</span>
                 <span class="font-preview font-roboto">The quick brown fox jumps over the lazy dog</span>
               </div>
-              <div class="font-option" data-font="opensans">
+              <div class="font-option" data-font="opensans" onclick="changeFont('Open Sans')">
                 <span class="font-name">Open Sans</span>
                 <span class="font-preview font-opensans">The quick brown fox jumps over the lazy dog</span>
               </div>
@@ -124,15 +124,15 @@ if (isset($_GET['selectedColor'])) {
           <div class="font-set">
             <div class="font-title">Classic</div>
             <div class="font-group">
-              <div class="font-option" data-font="georgia">
+              <div class="font-option" data-font="georgia" onclick="changeFont('Georgia')">
                 <span class="font-name">Georgia</span>
                 <span class="font-preview font-georgia">The quick brown fox jumps over the lazy dog</span>
               </div>
-              <div class="font-option" data-font="times">
+              <div class="font-option" data-font="times" onclick="changeFont('Times New Roman')">
                 <span class="font-name">Times New Roman</span>
                 <span class="font-preview font-times">The quick brown fox jumps over the lazy dog</span>
               </div>
-              <div class="font-option" data-font="garamond">
+              <div class="font-option" data-font="garamond" onclick="changeFont('Garamond')">
                 <span class="font-name">Garamond</span>
                 <span class="font-preview font-garamond">The quick brown fox jumps over the lazy dog</span>
               </div>
@@ -143,15 +143,15 @@ if (isset($_GET['selectedColor'])) {
           <div class="font-set">
             <div class="font-title">Creative</div>
             <div class="font-group">
-              <div class="font-option" data-font="playfair">
+              <div class="font-option" data-font="playfair" onclick="changeFont('Playfair Display')">
                 <span class="font-name">Playfair Display</span>
                 <span class="font-preview font-playfair">The quick brown fox jumps over the lazy dog</span>
               </div>
-              <div class="font-option" data-font="montserrat">
+              <div class="font-option" data-font="montserrat" onclick="changeFont('Montserrat')">
                 <span class="font-name">Montserrat</span>
                 <span class="font-preview font-montserrat">The quick brown fox jumps over the lazy dog</span>
               </div>
-              <div class="font-option" data-font="poppins">
+              <div class="font-option" data-font="poppins" onclick="changeFont('Poppins')">
                 <span class="font-name">Poppins</span>
                 <span class="font-preview font-poppins">The quick brown fox jumps over the lazy dog</span>
               </div>
@@ -174,7 +174,7 @@ if (isset($_GET['selectedColor'])) {
         <form action="colors.php" method="get">
           <button type="submit" class="button-back">BACK</button>
         </form>
-        <form action="/CMS/CMS/CMSTestProj/Build Template/builder/asset_manager.php" method="get" id="fontForm">
+        <form action="builder/asset_manager.php" method="get" id="fontForm">
           <input type="hidden" name="selectedFont" id="selectedFont" value="">
           <input type="hidden" name="selectedColor" value="<?php echo htmlspecialchars($_GET['selectedColor'] ?? ''); ?>">
           <button type="submit" class="button-next">NEXT</button>
@@ -184,5 +184,6 @@ if (isset($_GET['selectedColor'])) {
   </div>
 
   <script src="scripts.js"></script>
+  <script src="../jscripts/bTfont.js"></script>
 </body>
 </html>

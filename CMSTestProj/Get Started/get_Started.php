@@ -38,7 +38,7 @@ if (!isset($_SESSION['name'])) {
             <img src="template2.jpg" alt="Blueprint AI" class="preview" />
             <h2>Blueprint AI</h2>
             <p>Build a custom website guided by Placeholder.</p>
-            <a href="../Build Template/siteInfo.php">
+            <a href="../Build Template/site.php">
             <button class="action-btn">Build a Template</button>
             </a>
           </div>
