@@ -125,13 +125,19 @@ document.addEventListener('DOMContentLoaded', function() {
             };
         });
 
-        // Find all images with data-editable attribute
-        doc.querySelectorAll('img[data-editable]').forEach(element => {
-            const key = element.dataset.editable;
-            properties[key] = {
-                type: 'image',
-                value: element.src,
-                selector: `img[data-editable="${key}"]`
+        // Extract FAQ questions and answers
+        doc.querySelectorAll('.faq-item').forEach((item, index) => {
+            const question = item.querySelector('.faq-question').textContent.trim();
+            const answer = item.querySelector('.faq-answer').textContent.trim();
+            properties[`faq_question_${index + 1}`] = {
+                type: 'text',
+                value: question,
+                selector: `.faq-item:nth-child(${index + 1}) .faq-question`
+            };
+            properties[`faq_answer_${index + 1}`] = {
+                type: 'text',
+                value: answer,
+                selector: `.faq-item:nth-child(${index + 1}) .faq-answer`
             };
         });
 
@@ -187,6 +193,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 propertiesContent.appendChild(propertyElement);
             }
         });
+
+        // Add FAQ properties
+        for (let i = 1; i <= 4; i++) {
+            const questionKey = `faq_question_${i}`;
+            const answerKey = `faq_answer_${i}`;
+            
+            if (asset.properties[questionKey] && asset.properties[answerKey]) {
+                const faqGroup = document.createElement('div');
+                faqGroup.className = 'property-group';
+                faqGroup.innerHTML = `
+                    <label>FAQ Question ${i}</label>
+                    <input type="text" class="property-input" value="${asset.properties[questionKey].value}" data-property="${questionKey}">
+                    <label>FAQ Answer ${i}</label>
+                    <textarea class="property-input" data-property="${answerKey}">${asset.properties[answerKey].value}</textarea>
+                `;
+
+                // Handle changes
+                faqGroup.querySelector('input').addEventListener('input', (e) => {
+                    asset.properties[questionKey].value = e.target.value;
+                });
+                faqGroup.querySelector('textarea').addEventListener('input', (e) => {
+                    asset.properties[answerKey].value = e.target.value;
+                });
+
+                propertiesContent.appendChild(faqGroup);
+            }
+        }
 
         // Add color properties section
         const colorSection = document.createElement('div');
@@ -443,37 +476,16 @@ document.addEventListener('DOMContentLoaded', function() {
             headerElement.dataset.bgColor = state.header.styles.bgColor;
             headerElement.dataset.textColor = state.header.styles.textColor;
             
-            // Add edit button to header
-            const headerControls = document.createElement('div');
-            headerControls.className = 'asset-controls';
-            headerControls.innerHTML = `
-                <button class="edit-btn" title="Edit Header">✎</button>
-            `;
-            headerControls.querySelector('.edit-btn').addEventListener('click', () => {
-                showHeaderFooterProperties();
-            });
-            headerElement.appendChild(headerControls);
-        }
-        
-        const headerLogo = header.querySelector('[data-editable="header_logo"]');
-        const headerTitle = header.querySelector('[data-editable="header_title"]');
-        const navLinks = header.querySelectorAll('[data-editable^="nav_"]');
-        
-        if (headerLogo) headerLogo.src = state.header.logo;
-        if (headerTitle) {
-            headerTitle.textContent = state.header.title;
-            headerTitle.dataset.textColor = state.header.styles.textColor;
-        }
-        
-        navLinks.forEach(link => {
-            const key = link.dataset.editable.replace('nav_', '');
-            if (state.header.nav[key]) {
-                link.textContent = state.header.nav[key];
-                link.dataset.navColor = state.header.styles.navColor;
-                link.dataset.navHoverColor = state.header.styles.navHoverColor;
+            // Update header title and logo
+            const headerTitle = header.querySelector('[data-editable="header_title"]');
+            if (headerTitle) {
+                headerTitle.textContent = state.header.title;
             }
-        });
-        
+            const headerLogo = header.querySelector('[data-editable="header_logo"]');
+            if (headerLogo) {
+                headerLogo.src = state.header.logo;
+            }
+        }
         preview.appendChild(header);
 
         // Create main content container
@@ -562,29 +574,25 @@ document.addEventListener('DOMContentLoaded', function() {
             footerElement.classList.add('footer-styled');
             footerElement.dataset.bgColor = state.footer.styles.bgColor;
             footerElement.dataset.textColor = state.footer.styles.textColor;
-            
-            // Add edit button to footer
-            const footerControls = document.createElement('div');
-            footerControls.className = 'asset-controls';
-            footerControls.innerHTML = `
-                <button class="edit-btn" title="Edit Footer">✎</button>
-            `;
-            footerControls.querySelector('.edit-btn').addEventListener('click', () => {
-                showHeaderFooterProperties();
-            });
-            footerElement.appendChild(footerControls);
-        }
-        
-        const footerElements = footer.querySelectorAll('[data-editable]');
-        footerElements.forEach(element => {
-            const key = element.dataset.editable;
-            const [section, field] = key.split('_');
-            
-            if (state.footer[section] && state.footer[section][field]) {
-                element.textContent = state.footer[section][field];
-                element.dataset.textColor = state.footer.styles.textColor;
+
+            // Update footer contact information
+            const footerContactTitle = footer.querySelector('[data-editable="footer_contact_title"]');
+            if (footerContactTitle) {
+                footerContactTitle.textContent = state.footer.contact.title;
             }
-        });
+            const footerAddress = footer.querySelector('[data-editable="footer_address"]');
+            if (footerAddress) {
+                footerAddress.textContent = state.footer.contact.address;
+            }
+            const footerPhone = footer.querySelector('[data-editable="footer_phone"]');
+            if (footerPhone) {
+                footerPhone.textContent = state.footer.contact.phone;
+            }
+            const footerEmail = footer.querySelector('[data-editable="footer_email"]');
+            if (footerEmail) {
+                footerEmail.textContent = state.footer.contact.email;
+            }
+        }
 
         // Update footer links
         const footerLinks = footer.querySelectorAll('a');
@@ -857,8 +865,8 @@ function showHeaderFooterProperties() {
         </div>
     `;
 
-    const footerColorInputs = footerColorsGroup.querySelectorAll('input[type="color"]');
-    footerColorInputs.forEach(input => {
+    // Handle color changes
+    footerColorsGroup.querySelectorAll('input[type="color"]').forEach(input => {
         input.addEventListener('input', (e) => {
             const colorType = e.target.parentElement.querySelector('label').textContent.toLowerCase().replace(/\s+/g, '');
             tempFooterState.styles[colorType] = e.target.value;
@@ -867,7 +875,7 @@ function showHeaderFooterProperties() {
     
     footerSection.appendChild(footerColorsGroup);
     
-    // Contact Information
+    // Update footer contact information
     Object.entries(tempFooterState.contact).forEach(([key, value]) => {
         const contactGroup = document.createElement('div');
         contactGroup.className = 'property-group';
@@ -875,153 +883,23 @@ function showHeaderFooterProperties() {
             <label class="property-label">${key.charAt(0).toUpperCase() + key.slice(1)}</label>
             <input type="text" class="property-input" value="${value}">
         `;
-        
+
         contactGroup.querySelector('input').addEventListener('input', (e) => {
             tempFooterState.contact[key] = e.target.value;
         });
-        
+
         footerSection.appendChild(contactGroup);
     });
     
-    // Social Links
-    Object.entries(tempFooterState.social).forEach(([key, value]) => {
-        const socialGroup = document.createElement('div');
-        socialGroup.className = 'property-group';
-        socialGroup.innerHTML = `
-            <label class="property-label">${key.charAt(0).toUpperCase() + key.slice(1)}</label>
-            <input type="text" class="property-input" value="${value}">
-        `;
-        
-        socialGroup.querySelector('input').addEventListener('input', (e) => {
-            tempFooterState.social[key] = e.target.value;
-        });
-        
-        footerSection.appendChild(socialGroup);
-    });
-    
-    // Copyright
-    const copyrightGroup = document.createElement('div');
-    copyrightGroup.className = 'property-group';
-    copyrightGroup.innerHTML = `
-        <label class="property-label">Copyright Text</label>
-        <input type="text" class="property-input" value="${tempFooterState.copyright}">
-    `;
-    
-    copyrightGroup.querySelector('input').addEventListener('input', (e) => {
-        tempFooterState.copyright = e.target.value;
-    });
-    
-    footerSection.appendChild(copyrightGroup);
-    propertiesContent.appendChild(footerSection);
-
     // Add save button
     const saveButton = document.createElement('button');
     saveButton.className = 'save-properties-btn';
     saveButton.textContent = 'Save Changes';
     saveButton.addEventListener('click', async () => {
         try {
-            console.log('Saving header/footer changes...'); // Debug log
-            
             // Update the actual state with temporary changes
-            state.header = tempHeaderState;
-            state.footer = tempFooterState;
-            
-            console.log('Updated state:', state); // Debug log
-            
-            // Update preview directly
-            const preview = document.getElementById('preview');
-            if (preview) {
-                // Clear existing content
-                preview.innerHTML = '';
+            state.footer = tempFooterState; // Update the footer in the state
 
-                // Add header
-                const headerTemplate = document.getElementById('headerTemplate');
-                const header = headerTemplate.content.cloneNode(true);
-                
-                // Update header content and styles
-                const headerElement = header.querySelector('.site-header');
-                if (headerElement) {
-                    headerElement.classList.add('header-styled');
-                    headerElement.dataset.bgColor = state.header.styles.bgColor;
-                    headerElement.dataset.textColor = state.header.styles.textColor;
-                    
-                    // Add edit button to header
-                    const headerControls = document.createElement('div');
-                    headerControls.className = 'asset-controls';
-                    headerControls.innerHTML = `
-                        <button class="edit-btn" title="Edit Header">✎</button>
-                    `;
-                    headerControls.querySelector('.edit-btn').addEventListener('click', () => {
-                        showHeaderFooterProperties();
-                    });
-                    headerElement.appendChild(headerControls);
-                }
-                
-                const headerLogo = header.querySelector('[data-editable="header_logo"]');
-                const headerTitle = header.querySelector('[data-editable="header_title"]');
-                const navLinks = header.querySelectorAll('[data-editable^="nav_"]');
-                
-                if (headerLogo) headerLogo.src = state.header.logo;
-                if (headerTitle) {
-                    headerTitle.textContent = state.header.title;
-                    headerTitle.dataset.textColor = state.header.styles.textColor;
-                }
-                
-                navLinks.forEach(link => {
-                    const key = link.dataset.editable.replace('nav_', '');
-                    if (state.header.nav[key]) {
-                        link.textContent = state.header.nav[key];
-                        link.dataset.navColor = state.header.styles.navColor;
-                        link.dataset.navHoverColor = state.header.styles.navHoverColor;
-                    }
-                });
-                
-                preview.appendChild(header);
-
-                // Add footer
-                const footerTemplate = document.getElementById('footerTemplate');
-                const footer = footerTemplate.content.cloneNode(true);
-                
-                // Update footer content and styles
-                const footerElement = footer.querySelector('.site-footer');
-                if (footerElement) {
-                    footerElement.classList.add('footer-styled');
-                    footerElement.dataset.bgColor = state.footer.styles.bgColor;
-                    footerElement.dataset.textColor = state.footer.styles.textColor;
-                    
-                    // Add edit button to footer
-                    const footerControls = document.createElement('div');
-                    footerControls.className = 'asset-controls';
-                    footerControls.innerHTML = `
-                        <button class="edit-btn" title="Edit Footer">✎</button>
-                    `;
-                    footerControls.querySelector('.edit-btn').addEventListener('click', () => {
-                        showHeaderFooterProperties();
-                    });
-                    footerElement.appendChild(footerControls);
-                }
-                
-                const footerElements = footer.querySelectorAll('[data-editable]');
-                footerElements.forEach(element => {
-                    const key = element.dataset.editable;
-                    const [section, field] = key.split('_');
-                    
-                    if (state.footer[section] && state.footer[section][field]) {
-                        element.textContent = state.footer[section][field];
-                        element.dataset.textColor = state.footer.styles.textColor;
-                    }
-                });
-
-                // Update footer links
-                const footerLinks = footer.querySelectorAll('a');
-                footerLinks.forEach(link => {
-                    link.dataset.linkColor = state.footer.styles.linkColor;
-                    link.dataset.linkHoverColor = state.footer.styles.linkHoverColor;
-                });
-                
-                preview.appendChild(footer);
-            }
-            
             // Save state to server directly
             const response = await fetch('asset_manager.php', {
                 method: 'POST',
@@ -1046,7 +924,10 @@ function showHeaderFooterProperties() {
             notification.textContent = 'Changes saved';
             document.body.appendChild(notification);
             setTimeout(() => notification.remove(), 2000);
-            
+
+            // Update the preview to reflect changes
+            updatePreview(); // Call to update the preview
+
             // Close properties panel
             closeProperties();
         } catch (error) {
@@ -1054,7 +935,7 @@ function showHeaderFooterProperties() {
             alert(`Failed to save changes: ${error.message}`);
         }
     });
-    propertiesContent.appendChild(saveButton);
+    footerSection.appendChild(saveButton);
     
     // Show the panel
     propertiesPanel.classList.add('active');
