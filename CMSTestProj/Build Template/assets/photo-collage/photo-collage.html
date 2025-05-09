@@ -1,20 +1,30 @@
-<!-- Photo Collage Component -->
-<div class="photo-collage" data-editable="title" data-type="text">Photo Gallery</div>
-<div class="collage-container">
-    <div class="collage-item" data-editable="image1" data-type="image">
-        <img src="assets/placeholder.jpg" alt="Photo 1">
-        <div class="caption" data-editable="caption1" data-type="text">Photo Caption 1</div>
-    </div>
-    <div class="collage-item" data-editable="image2" data-type="image">
-        <img src="assets/placeholder.jpg" alt="Photo 2">
-        <div class="caption" data-editable="caption2" data-type="text">Photo Caption 2</div>
-    </div>
-    <div class="collage-item" data-editable="image3" data-type="image">
-        <img src="assets/placeholder.jpg" alt="Photo 3">
-        <div class="caption" data-editable="caption3" data-type="text">Photo Caption 3</div>
-    </div>
-    <div class="collage-item" data-editable="image4" data-type="image">
-        <img src="assets/placeholder.jpg" alt="Photo 4">
-        <div class="caption" data-editable="caption4" data-type="text">Photo Caption 4</div>
+<!-- Photo Gallery Component -->
+<div class="photo-gallery" data-component="photo-gallery">
+    <h2 class="gallery-title" data-editable="title" data-type="text">Photo Gallery</h2>
+    <div class="gallery-grid">
+        <div class="gallery-item" data-editable="photo1" data-type="image">
+            <div class="image-container">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='24' fill='%23999'%3EPhoto 1%3C/text%3E%3C/svg%3E" alt="Gallery Image 1">
+                <div class="image-caption" data-editable="caption1" data-type="text">Add caption here</div>
+            </div>
+        </div>
+        <div class="gallery-item" data-editable="photo2" data-type="image">
+            <div class="image-container">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='24' fill='%23999'%3EPhoto 2%3C/text%3E%3C/svg%3E" alt="Gallery Image 2">
+                <div class="image-caption" data-editable="caption2" data-type="text">Add caption here</div>
+            </div>
+        </div>
+        <div class="gallery-item" data-editable="photo3" data-type="image">
+            <div class="image-container">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='24' fill='%23999'%3EPhoto 3%3C/text%3E%3C/svg%3E" alt="Gallery Image 3">
+                <div class="image-caption" data-editable="caption3" data-type="text">Add caption here</div>
+            </div>
+        </div>
+        <div class="gallery-item" data-editable="photo4" data-type="image">
+            <div class="image-container">
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='300' viewBox='0 0 400 300'%3E%3Crect width='400' height='300' fill='%23f0f0f0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='24' fill='%23999'%3EPhoto 4%3C/text%3E%3C/svg%3E" alt="Gallery Image 4">
+                <div class="image-caption" data-editable="caption4" data-type="text">Add caption here</div>
+            </div>
+        </div>
     </div>
 </div> 

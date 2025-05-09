@@ -1,10 +1,50 @@
 <?php
 session_start();
 
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 // Initialize or get the current state
 $currentState = isset($_SESSION['asset_state']) ? $_SESSION['asset_state'] : [
     'assets' => [],
-    'styles' => []
+    'header' => [
+        'logo' => 'assets/logo.png',
+        'title' => 'University Name',
+        'nav' => [
+            'home' => 'Home',
+            'about' => 'About',
+            'admissions' => 'Admissions',
+            'contact' => 'Contact'
+        ],
+        'styles' => [
+            'bgColor' => '#ffffff',
+            'textColor' => '#333333',
+            'navColor' => '#333333',
+            'navHoverColor' => '#4A90E2'
+        ]
+    ],
+    'footer' => [
+        'contact' => [
+            'title' => 'Contact Us',
+            'address' => '123 University Ave, City, State 12345',
+            'phone' => 'Phone: (123) 456-7890',
+            'email' => 'Email: info@university.edu'
+        ],
+        'social' => [
+            'title' => 'Follow Us',
+            'facebook' => 'Facebook',
+            'twitter' => 'Twitter',
+            'instagram' => 'Instagram'
+        ],
+        'copyright' => '© 2024 University Name. All rights reserved.',
+        'styles' => [
+            'bgColor' => '#ffffff',
+            'textColor' => '#333333',
+            'linkColor' => '#333333',
+            'linkHoverColor' => '#4A90E2'
+        ]
+    ]
 ];
 
 // Create uploads directory if it doesn't exist
@@ -19,8 +59,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     switch ($action) {
         case 'save_state':
-            $_SESSION['asset_state'] = json_decode($_POST['state'], true);
-            echo json_encode(['success' => true]);
+            try {
+                $newState = json_decode($_POST['state'], true);
+                if (json_last_error() !== JSON_ERROR_NONE) {
+                    throw new Exception('Invalid JSON data received');
+                }
+                
+                // Validate state structure
+                if (!isset($newState['assets']) || !isset($newState['header']) || !isset($newState['footer'])) {
+                    throw new Exception('Invalid state structure');
+                }
+                
+                // Save to session
+                $_SESSION['asset_state'] = $newState;
+                
+                // Log success
+                error_log('State saved successfully: ' . print_r($newState, true));
+                
+                echo json_encode(['success' => true]);
+            } catch (Exception $e) {
+                error_log('Error saving state: ' . $e->getMessage());
+                echo json_encode([
+                    'success' => false,
+                    'error' => $e->getMessage()
+                ]);
+            }
             exit;
             
         case 'load_asset':
@@ -135,7 +198,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asset Manager</title>
-    <link rel="stylesheet" href="asset_manager.css">
+    <link rel="stylesheet" href="asset_manager.css?v=<?php echo time(); ?>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lato:wght@400;700&family=Merriweather:wght@400;700&family=Montserrat:wght@400;600&family=Nunito:wght@400;600&family=Open+Sans:wght@400;600&family=Playfair+Display:wght@400;600&family=Poppins:wght@400;600&family=Raleway:wght@400;600&family=Roboto:wght@400;500&family=Source+Sans+Pro:wght@400;600&family=Ubuntu:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -182,7 +245,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
 
             <!-- Asset Properties Panel -->
-            <div id="assetProperties" class="asset-properties" style="display: none;">
+            <div id="assetProperties" class="asset-properties">
                 <h3>
                     Asset Properties
                     <button class="close-properties" title="Close properties">×</button>

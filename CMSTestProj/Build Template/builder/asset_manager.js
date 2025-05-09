@@ -3,7 +3,7 @@ let state = window.assetState || {
     assets: [],
     styles: [],
     header: {
-        logo: 'assets/logo.png',
+        logo: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="50" viewBox="0 0 200 50"%3E%3Crect width="200" height="50" fill="%23f0f0f0"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="16" fill="%23999"%3EUniversity Logo%3C/text%3E%3C/svg%3E',
         title: 'University Name',
         nav: {
             home: 'Home',
@@ -140,11 +140,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Show properties panel for an asset
     function showProperties(assetId) {
+        console.log('Showing properties for asset:', assetId); // Debug log
         const propertiesPanel = document.getElementById('assetProperties');
+        if (!propertiesPanel) {
+            console.error('Properties panel not found');
+            return;
+        }
+
         const propertiesContent = propertiesPanel.querySelector('.properties-content');
         const asset = state.assets[assetId];
         
-        if (!asset) return;
+        if (!asset) {
+            console.error('Asset not found:', assetId);
+            return;
+        }
 
         // Clear existing properties
         propertiesContent.innerHTML = '';
@@ -221,29 +230,53 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Add save button
         const saveButton = document.createElement('button');
-        saveButton.className = 'btn-primary save-properties-btn';
+        saveButton.className = 'save-properties-btn';
         saveButton.textContent = 'Save Changes';
-        saveButton.addEventListener('click', () => {
-            // Update the actual state with temporary changes
-            state.assets[assetId].properties = tempState.properties;
-            state.assets[assetId].styles = tempState.styles;
-            
-            // Update preview
-            updatePreview();
-            
-            // Save state
-            saveState().then(() => {
+        saveButton.addEventListener('click', async () => {
+            try {
+                // Update the actual state with temporary changes
+                state.assets[assetId].properties = tempState.properties;
+                state.assets[assetId].styles = tempState.styles;
+                
+                // Update preview
+                updatePreview();
+                
+                // Save state to server
+                const response = await fetch('asset_manager.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `action=save_state&state=${encodeURIComponent(JSON.stringify(state))}`
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to save changes');
+                }
+
+                const data = await response.json();
+                if (!data.success) {
+                    throw new Error(data.error || 'Failed to save changes');
+                }
+
+                // Show success notification
                 const notification = document.createElement('div');
                 notification.className = 'save-notification';
                 notification.textContent = 'Changes saved';
                 document.body.appendChild(notification);
                 setTimeout(() => notification.remove(), 2000);
-            });
+                
+                // Close properties panel
+                closeProperties();
+            } catch (error) {
+                console.error('Error saving state:', error);
+                alert('Failed to save changes. Please try again.');
+            }
         });
         propertiesContent.appendChild(saveButton);
 
         // Show the panel
-        propertiesPanel.style.display = 'block';
+        propertiesPanel.classList.add('active');
     }
 
     // Create text property input
@@ -406,8 +439,20 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update header content and styles
         const headerElement = header.querySelector('.site-header');
         if (headerElement) {
-            headerElement.style.backgroundColor = state.header.styles.bgColor;
-            headerElement.style.color = state.header.styles.textColor;
+            headerElement.classList.add('header-styled');
+            headerElement.dataset.bgColor = state.header.styles.bgColor;
+            headerElement.dataset.textColor = state.header.styles.textColor;
+            
+            // Add edit button to header
+            const headerControls = document.createElement('div');
+            headerControls.className = 'asset-controls';
+            headerControls.innerHTML = `
+                <button class="edit-btn" title="Edit Header">✎</button>
+            `;
+            headerControls.querySelector('.edit-btn').addEventListener('click', () => {
+                showHeaderFooterProperties();
+            });
+            headerElement.appendChild(headerControls);
         }
         
         const headerLogo = header.querySelector('[data-editable="header_logo"]');
@@ -417,20 +462,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if (headerLogo) headerLogo.src = state.header.logo;
         if (headerTitle) {
             headerTitle.textContent = state.header.title;
-            headerTitle.style.color = state.header.styles.textColor;
+            headerTitle.dataset.textColor = state.header.styles.textColor;
         }
         
         navLinks.forEach(link => {
             const key = link.dataset.editable.replace('nav_', '');
             if (state.header.nav[key]) {
                 link.textContent = state.header.nav[key];
-                link.style.color = state.header.styles.navColor;
-                link.addEventListener('mouseover', () => {
-                    link.style.color = state.header.styles.navHoverColor;
-                });
-                link.addEventListener('mouseout', () => {
-                    link.style.color = state.header.styles.navColor;
-                });
+                link.dataset.navColor = state.header.styles.navColor;
+                link.dataset.navHoverColor = state.header.styles.navHoverColor;
             }
         });
         
@@ -476,7 +516,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     container.classList.remove('dragging');
                 });
                 
-                controls.querySelector('.edit-btn').addEventListener('click', () => {
+                // Fix edit button event listener
+                const editBtn = controls.querySelector('.edit-btn');
+                editBtn.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent event bubbling
                     showProperties(assetId);
                 });
                 
@@ -485,10 +528,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         delete state.assets[assetId];
                         updatePreview();
                         saveState();
-                        const propertiesPanel = document.getElementById('assetProperties');
-                        if (propertiesPanel) {
-                            propertiesPanel.style.display = 'none';
-                        }
+                        closeProperties();
                     }
                 });
                 
@@ -519,8 +559,20 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update footer content and styles
         const footerElement = footer.querySelector('.site-footer');
         if (footerElement) {
-            footerElement.style.backgroundColor = state.footer.styles.bgColor;
-            footerElement.style.color = state.footer.styles.textColor;
+            footerElement.classList.add('footer-styled');
+            footerElement.dataset.bgColor = state.footer.styles.bgColor;
+            footerElement.dataset.textColor = state.footer.styles.textColor;
+            
+            // Add edit button to footer
+            const footerControls = document.createElement('div');
+            footerControls.className = 'asset-controls';
+            footerControls.innerHTML = `
+                <button class="edit-btn" title="Edit Footer">✎</button>
+            `;
+            footerControls.querySelector('.edit-btn').addEventListener('click', () => {
+                showHeaderFooterProperties();
+            });
+            footerElement.appendChild(footerControls);
         }
         
         const footerElements = footer.querySelectorAll('[data-editable]');
@@ -530,28 +582,25 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (state.footer[section] && state.footer[section][field]) {
                 element.textContent = state.footer[section][field];
-                element.style.color = state.footer.styles.textColor;
+                element.dataset.textColor = state.footer.styles.textColor;
             }
         });
 
         // Update footer links
         const footerLinks = footer.querySelectorAll('a');
         footerLinks.forEach(link => {
-            link.style.color = state.footer.styles.linkColor;
-            link.addEventListener('mouseover', () => {
-                link.style.color = state.footer.styles.linkHoverColor;
-            });
-            link.addEventListener('mouseout', () => {
-                link.style.color = state.footer.styles.linkColor;
-            });
+            link.dataset.linkColor = state.footer.styles.linkColor;
+            link.dataset.linkHoverColor = state.footer.styles.linkHoverColor;
         });
         
         preview.appendChild(footer);
     }
 
-    // Save state to server
+    // Move saveState function to global scope
     async function saveState() {
         try {
+            console.log('Saving state:', state); // Debug log
+            
             const response = await fetch('asset_manager.php', {
                 method: 'POST',
                 headers: {
@@ -560,11 +609,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: `action=save_state&state=${encodeURIComponent(JSON.stringify(state))}`
             });
 
+            console.log('Save response status:', response.status); // Debug log
+            
             if (!response.ok) {
-                throw new Error('Failed to save changes');
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
 
             const data = await response.json();
+            console.log('Save response data:', data); // Debug log
+            
             if (!data.success) {
                 throw new Error(data.error || 'Failed to save changes');
             }
@@ -572,8 +625,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return true;
         } catch (error) {
             console.error('Error saving state:', error);
-            alert('Failed to save changes. Please try again.');
-            return false;
+            throw error; // Re-throw to handle in the calling function
         }
     }
 
@@ -621,27 +673,19 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize preview
     updatePreview();
 
-    // Add header/footer edit button to the preview header
+    // Remove the old header/footer edit button
     const previewHeader = document.querySelector('.preview-header');
     if (previewHeader) {
-        const editHeaderBtn = document.createElement('button');
-        editHeaderBtn.className = 'btn-primary';
-        editHeaderBtn.textContent = 'Edit Header/Footer';
-        editHeaderBtn.addEventListener('click', () => {
-            showHeaderFooterProperties();
-        });
-        previewHeader.appendChild(editHeaderBtn);
+        const oldEditButton = previewHeader.querySelector('.btn-primary:last-child');
+        if (oldEditButton) {
+            oldEditButton.remove();
+        }
     }
 
     // Add close button functionality
     const closeButton = document.querySelector('.close-properties');
     if (closeButton) {
-        closeButton.addEventListener('click', () => {
-            const propertiesPanel = document.getElementById('assetProperties');
-            if (propertiesPanel) {
-                propertiesPanel.style.display = 'none';
-            }
-        });
+        closeButton.addEventListener('click', closeProperties);
     }
 
     // Initialize drag and drop functionality
@@ -872,25 +916,148 @@ function showHeaderFooterProperties() {
 
     // Add save button
     const saveButton = document.createElement('button');
-    saveButton.className = 'btn-primary save-properties-btn';
+    saveButton.className = 'save-properties-btn';
     saveButton.textContent = 'Save Changes';
-    saveButton.addEventListener('click', () => {
-        // Update the actual state with temporary changes
-        state.header = tempHeaderState;
-        state.footer = tempFooterState;
-        updatePreview();
-        saveState().then(() => {
+    saveButton.addEventListener('click', async () => {
+        try {
+            console.log('Saving header/footer changes...'); // Debug log
+            
+            // Update the actual state with temporary changes
+            state.header = tempHeaderState;
+            state.footer = tempFooterState;
+            
+            console.log('Updated state:', state); // Debug log
+            
+            // Update preview directly
+            const preview = document.getElementById('preview');
+            if (preview) {
+                // Clear existing content
+                preview.innerHTML = '';
+
+                // Add header
+                const headerTemplate = document.getElementById('headerTemplate');
+                const header = headerTemplate.content.cloneNode(true);
+                
+                // Update header content and styles
+                const headerElement = header.querySelector('.site-header');
+                if (headerElement) {
+                    headerElement.classList.add('header-styled');
+                    headerElement.dataset.bgColor = state.header.styles.bgColor;
+                    headerElement.dataset.textColor = state.header.styles.textColor;
+                    
+                    // Add edit button to header
+                    const headerControls = document.createElement('div');
+                    headerControls.className = 'asset-controls';
+                    headerControls.innerHTML = `
+                        <button class="edit-btn" title="Edit Header">✎</button>
+                    `;
+                    headerControls.querySelector('.edit-btn').addEventListener('click', () => {
+                        showHeaderFooterProperties();
+                    });
+                    headerElement.appendChild(headerControls);
+                }
+                
+                const headerLogo = header.querySelector('[data-editable="header_logo"]');
+                const headerTitle = header.querySelector('[data-editable="header_title"]');
+                const navLinks = header.querySelectorAll('[data-editable^="nav_"]');
+                
+                if (headerLogo) headerLogo.src = state.header.logo;
+                if (headerTitle) {
+                    headerTitle.textContent = state.header.title;
+                    headerTitle.dataset.textColor = state.header.styles.textColor;
+                }
+                
+                navLinks.forEach(link => {
+                    const key = link.dataset.editable.replace('nav_', '');
+                    if (state.header.nav[key]) {
+                        link.textContent = state.header.nav[key];
+                        link.dataset.navColor = state.header.styles.navColor;
+                        link.dataset.navHoverColor = state.header.styles.navHoverColor;
+                    }
+                });
+                
+                preview.appendChild(header);
+
+                // Add footer
+                const footerTemplate = document.getElementById('footerTemplate');
+                const footer = footerTemplate.content.cloneNode(true);
+                
+                // Update footer content and styles
+                const footerElement = footer.querySelector('.site-footer');
+                if (footerElement) {
+                    footerElement.classList.add('footer-styled');
+                    footerElement.dataset.bgColor = state.footer.styles.bgColor;
+                    footerElement.dataset.textColor = state.footer.styles.textColor;
+                    
+                    // Add edit button to footer
+                    const footerControls = document.createElement('div');
+                    footerControls.className = 'asset-controls';
+                    footerControls.innerHTML = `
+                        <button class="edit-btn" title="Edit Footer">✎</button>
+                    `;
+                    footerControls.querySelector('.edit-btn').addEventListener('click', () => {
+                        showHeaderFooterProperties();
+                    });
+                    footerElement.appendChild(footerControls);
+                }
+                
+                const footerElements = footer.querySelectorAll('[data-editable]');
+                footerElements.forEach(element => {
+                    const key = element.dataset.editable;
+                    const [section, field] = key.split('_');
+                    
+                    if (state.footer[section] && state.footer[section][field]) {
+                        element.textContent = state.footer[section][field];
+                        element.dataset.textColor = state.footer.styles.textColor;
+                    }
+                });
+
+                // Update footer links
+                const footerLinks = footer.querySelectorAll('a');
+                footerLinks.forEach(link => {
+                    link.dataset.linkColor = state.footer.styles.linkColor;
+                    link.dataset.linkHoverColor = state.footer.styles.linkHoverColor;
+                });
+                
+                preview.appendChild(footer);
+            }
+            
+            // Save state to server directly
+            const response = await fetch('asset_manager.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `action=save_state&state=${encodeURIComponent(JSON.stringify(state))}`
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            if (!data.success) {
+                throw new Error(data.error || 'Failed to save changes');
+            }
+
+            // Show success notification
             const notification = document.createElement('div');
             notification.className = 'save-notification';
             notification.textContent = 'Changes saved';
             document.body.appendChild(notification);
             setTimeout(() => notification.remove(), 2000);
-        });
+            
+            // Close properties panel
+            closeProperties();
+        } catch (error) {
+            console.error('Error saving header/footer changes:', error);
+            alert(`Failed to save changes: ${error.message}`);
+        }
     });
     propertiesContent.appendChild(saveButton);
     
     // Show the panel
-    propertiesPanel.style.display = 'block';
+    propertiesPanel.classList.add('active');
 }
 
 function initializeDragAndDrop() {
@@ -982,10 +1149,186 @@ function addAssetToPreview(asset) {
     previewContainer.appendChild(assetElement);
 }
 
-// Add to the existing initialize function
-function initialize() {
-    // ... existing code ...
+// Update the closeProperties function
+function closeProperties() {
+    const propertiesPanel = document.getElementById('assetProperties');
+    if (propertiesPanel) {
+        propertiesPanel.classList.remove('active');
+    }
+}
+
+// Add this function to handle photo gallery properties
+function showPhotoGalleryProperties(assetId) {
+    const propertiesPanel = document.getElementById('assetProperties');
+    const propertiesContent = propertiesPanel.querySelector('.properties-content');
     
-    // Initialize drag and drop for existing assets
-    initializeDragAndDrop();
+    // Clear existing properties
+    propertiesContent.innerHTML = '';
+    
+    // Get the asset from state
+    const asset = state.assets.find(a => a.id === assetId);
+    if (!asset) {
+        console.error('Asset not found:', assetId);
+        return;
+    }
+    
+    // Create temporary state for unsaved changes
+    const tempState = {
+        title: asset.properties?.title?.value || 'Photo Gallery',
+        photos: {}
+    };
+    
+    // Initialize photos from asset properties
+    for (let i = 1; i <= 4; i++) {
+        tempState.photos[`photo${i}`] = {
+            url: asset.properties[`photo${i}`]?.value || '',
+            caption: asset.properties[`caption${i}`]?.value || ''
+        };
+    }
+    
+    // Add title property
+    const titleGroup = document.createElement('div');
+    titleGroup.className = 'property-group';
+    titleGroup.innerHTML = `
+        <label>Gallery Title</label>
+        <input type="text" class="property-input" value="${tempState.title}" 
+               data-property="title">
+    `;
+    propertiesContent.appendChild(titleGroup);
+    
+    // Add photo properties
+    for (let i = 1; i <= 4; i++) {
+        const photoGroup = document.createElement('div');
+        photoGroup.className = 'property-group';
+        photoGroup.innerHTML = `
+            <label>Photo ${i}</label>
+            <input type="file" class="property-input" accept="image/*" data-property="photo${i}">
+            <div class="image-preview"></div>
+            <label>Caption ${i}</label>
+            <input type="text" class="property-input" value="${tempState.photos[`photo${i}`].caption}" 
+                   data-property="caption${i}">
+        `;
+        
+        // Add image preview
+        const imagePreview = photoGroup.querySelector('.image-preview');
+        if (tempState.photos[`photo${i}`].url) {
+            const img = document.createElement('img');
+            img.src = tempState.photos[`photo${i}`].url;
+            imagePreview.appendChild(img);
+        }
+        
+        // Handle image upload
+        const imageInput = photoGroup.querySelector('input[type="file"]');
+        imageInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                imagePreview.innerHTML = '<div class="loading">Uploading...</div>';
+                
+                try {
+                    const formData = new FormData();
+                    formData.append('action', 'upload_image');
+                    formData.append('image', file);
+                    
+                    const response = await fetch('asset_manager.php', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (!response.ok) throw new Error('Upload failed');
+                    
+                    const data = await response.json();
+                    if (data.success) {
+                        tempState.photos[`photo${i}`].url = data.url;
+                        imagePreview.innerHTML = `<img src="${data.url}">`;
+                        console.log('Photo uploaded successfully:', data.url);
+                        
+                        // Update asset properties
+                        if (!asset.properties[`photo${i}`]) {
+                            asset.properties[`photo${i}`] = { type: 'image', value: '' };
+                        }
+                        asset.properties[`photo${i}`].value = data.url;
+                        
+                        // Update preview
+                        updatePreview();
+                    } else {
+                        throw new Error(data.error || 'Upload failed');
+                    }
+                } catch (error) {
+                    console.error('Error uploading photo:', error);
+                    imagePreview.innerHTML = '<div class="error">Upload failed</div>';
+                }
+            }
+        });
+        
+        // Handle caption changes
+        const captionInput = photoGroup.querySelector('input[type="text"]');
+        captionInput.addEventListener('input', (e) => {
+            tempState.photos[`photo${i}`].caption = e.target.value;
+            
+            // Update asset properties
+            if (!asset.properties[`caption${i}`]) {
+                asset.properties[`caption${i}`] = { type: 'text', value: '' };
+            }
+            asset.properties[`caption${i}`].value = e.target.value;
+            
+            // Update preview
+            updatePreview();
+        });
+        
+        propertiesContent.appendChild(photoGroup);
+    }
+    
+    // Add save button
+    const saveButton = document.createElement('button');
+    saveButton.className = 'save-properties-btn';
+    saveButton.textContent = 'Save Changes';
+    saveButton.addEventListener('click', async () => {
+        try {
+            console.log('Saving photo gallery changes...');
+            
+            // Update title in asset properties
+            if (!asset.properties.title) {
+                asset.properties.title = { type: 'text', value: '' };
+            }
+            asset.properties.title.value = tempState.title;
+            
+            // Save state to server
+            const response = await fetch('asset_manager.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `action=save_state&state=${encodeURIComponent(JSON.stringify(state))}`
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            if (!data.success) {
+                throw new Error(data.error || 'Failed to save changes');
+            }
+
+            // Show success notification
+            const notification = document.createElement('div');
+            notification.className = 'save-notification';
+            notification.textContent = 'Changes saved';
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 2000);
+            
+            // Close properties panel
+            closeProperties();
+            
+            // Force preview update
+            updatePreview();
+        } catch (error) {
+            console.error('Error saving photo gallery changes:', error);
+            alert(`Failed to save changes: ${error.message}`);
+        }
+    });
+    propertiesContent.appendChild(saveButton);
+    
+    // Show the panel
+    propertiesPanel.classList.add('active');
 } 
