@@ -1,5 +1,5 @@
 <?php
-// Optional: start session if you'll store site title
+
 session_start();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
