@@ -5,7 +5,6 @@ session_start();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $siteTitle = htmlspecialchars(trim($_POST['site-title']));
 
-    // You can store it in session or database
     $_SESSION['site-title'] = $siteTitle;
 
     // Redirect to next step
@@ -42,14 +41,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </div>
 
     <div class="right-inner">
-      <div class="content">
-        <h1>Choose a site title</h1>
-        <form method="POST" action="">
-          <div class="form-group">
-            <label for="site-title">Site title</label>
+       <div class="content">
+          <h1>Choose a site title</h1>
+           <form method="POST" action="">
+             <div class="form-group">
+               <label for="site-title">Site title</label>
             <div class="note">This is the name of your site. You can change it later.</div>
             <input type="text" id="site-title" name="site-title" placeholder="Your site title" maxlength="100" required />
-          </div>
+       </div>
     </div>
 
     <div class="footer">
@@ -73,6 +72,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </div>
 
     </div>
+    
   </div>
 
   <script src="scripts.js"></script>

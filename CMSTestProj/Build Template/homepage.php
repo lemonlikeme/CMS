@@ -1,19 +1,15 @@
 <?php
 session_start();
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Collect all checked sections
-    $sections = [];
-    foreach ($_POST as $key => $value) {
-        if (strpos($key, 'section-') === 0) {
-            $sections[] = $key;
-        }
-    }
-    $_SESSION['homepage_sections'] = $sections;
-    header("Location: pages.php");
-    exit();
-}
 ?>
+<script>
+        console.group('Form Submission Data');
+        console.log('Site Title:', <?php echo json_encode($_SESSION['site_title'] ?? 'Not set'); ?>);
+        console.log('Submission Time:', <?php echo json_encode($_SESSION['submission_time'] ?? 'Not set'); ?>);
+        console.log('Full Session:', <?php echo json_encode($_SESSION); ?>);
+        console.groupEnd();
+    </script>
+
 
 <!DOCTYPE html>
 <html lang="en">
