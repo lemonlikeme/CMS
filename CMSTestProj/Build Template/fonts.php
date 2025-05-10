@@ -12,7 +12,6 @@ if (isset($_GET['selectedColor'])) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Fonts</title>
   <!-- Add Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Helvetica+Neue&family=Roboto&family=Open+Sans&family=Georgia&family=Times+New+Roman&family=Garamond&family=Playfair+Display&family=Montserrat&family=Poppins&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="test.css" />
   <style>
     <?php if (!empty($selectedColors)): ?>
@@ -74,8 +73,8 @@ if (isset($_GET['selectedColor'])) {
             <div class="preview-main">
               <img src="images/250x200.jpg" alt="Preview" class="preview-image"/>
               <div class="preview-text">
-                <h2 class="pv-text">More about our brand</h2>
-                <p class="pv-text">
+                <h2 class="pv-text-h2">More about our brand</h2>
+                <p class="pv-text-p">
                   Inform individuals about your identity, the place from which you originate,
                   the methodology you employ in your work, or the sources of inspiration that drive you.
                   You have the capability to do this.

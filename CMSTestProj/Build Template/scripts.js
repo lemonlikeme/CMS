@@ -24,6 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     fontOptions.forEach(option => {
       option.addEventListener('click', function() {
+        console.log('Font option clicked');
+        
         // Remove selected class from all options
         fontOptions.forEach(opt => opt.classList.remove('selected'));
         // Add selected class to clicked option
@@ -37,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log('Selected font:', fontName, 'Class:', fontClass);
 
         // Update preview card font
-        if (previewText) {
+        if (previewCard && previewText) {
           // Remove all font classes from preview text
           previewText.classList.remove(
             'font-helvetica', 'font-roboto', 'font-opensans',
@@ -53,9 +55,6 @@ document.addEventListener("DOMContentLoaded", () => {
             selectedFontInput.value = fontName;
           }
         }
-
-        console.log('Preview Card:', previewCard);
-        console.log('Preview Text:', previewText);
       });
     });
 
