@@ -27,22 +27,22 @@ if (!isset($_SESSION['name'])) {
         </div>
       
         <div class="options">
+          <!-- Designer Works -->
           <div class="option-card">
             <img src="template1.jpg" alt="Designer Templates" class="preview" />
             <h2>Designer Works</h2>
             <p>Your gallery of works are displayed here.</p>
-            <a href="gallery.php">
-            <button class="action-btn">Continue to Gallery</button>
+            <button class="action-btn" onclick="location.href='gallery.php'">Continue to Gallery</button>
           </div>
-      
+
+          <!-- Build Template -->
           <div class="option-card">
             <img src="template2.jpg" alt="Blueprint AI" class="preview" />
             <h2>Build a Custom Website</h2>
             <p>Build a custom website guided by Placeholder.</p>
-            <a href="../Build Template/site.php">
-            <button class="action-btn">Build a Template</button>
-            </a>
+            <button class="action-btn" onclick="location.href='../Build Template/site.php'">Build a Template</button>
           </div>
+
         </div>
       
         <a href="../index.php">
