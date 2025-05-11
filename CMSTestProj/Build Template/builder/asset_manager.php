@@ -207,7 +207,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="preview-panel">
             <div class="preview-header">
                 <h2>Preview</h2>
-                <button id="savePreview" class="btn-primary">Save Changes</button>
+                <button id="savePreview" class="btn-primary">Save Work</button>
+                <a href="../fonts.php">
+                    <button class="action-btn back-btn">Back</button>
+                </a>
             </div>
             <div id="preview" class="preview-content">
                 <p class="placeholder">Add assets from the right panel to start building your page.</p>
@@ -349,5 +352,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         const assetState = <?php echo json_encode($currentState); ?>;
     </script>
     <script src="asset_manager.js"></script>
-</body>
+
 </html> 
