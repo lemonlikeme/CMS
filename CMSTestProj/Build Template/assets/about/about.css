@@ -1,0 +1,53 @@
+/* About Section Styles */
+.about-section {
+    padding: 60px 20px;
+    background-color: #f4f6f8;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .about-container {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 1100px;
+    margin: 0 auto;
+    align-items: center;
+    gap: 30px;
+  }
+  
+  .about-image {
+    flex: 1 1 45%;
+  }
+  
+  .about-image img {
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  .about-text {
+    flex: 1 1 50%;
+  }
+  
+  .about-title {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin-bottom: 20px;
+  }
+  
+  .about-description {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.6;
+  }
+  
+  @media (max-width: 768px) {
+    .about-container {
+      flex-direction: column;
+      text-align: center;
+    }
+  
+    .about-text {
+      margin-top: 20px;
+    }
+  }
+  
