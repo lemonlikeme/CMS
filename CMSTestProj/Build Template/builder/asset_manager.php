@@ -189,6 +189,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ]);
             }
             exit;
+            
+        case 'upload_video':
+            if (isset($_FILES['video'])) {
+                $file = $_FILES['video'];
+                $fileName = uniqid() . '_' . basename($file['name']);
+                $targetPath = $uploadDir . $fileName;
+
+                // Check file type
+                $allowedTypes = ['video/mp4'];
+                if (!in_array($file['type'], $allowedTypes)) {
+                    echo json_encode([
+                        'success' => false,
+                        'error' => 'Invalid file type. Only MP4 is allowed.'
+                    ]);
+                    exit;
+                }
+
+                // Check file size (max 50MB)
+                if ($file['size'] > 50 * 1024 * 1024) {
+                    echo json_encode([
+                        'success' => false,
+                        'error' => 'File too large. Maximum size is 50MB.'
+                    ]);
+                    exit;
+                }
+
+                if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+                    echo json_encode([
+                        'success' => true,
+                        'url' => 'uploads/' . $fileName
+                    ]);
+                } else {
+                    echo json_encode([
+                        'success' => false,
+                        'error' => 'Failed to upload file'
+                    ]);
+                }
+            } else {
+                echo json_encode([
+                    'success' => false,
+                    'error' => 'No file uploaded'
+                ]);
+            }
+            exit;
     }
 }
 ?>
@@ -227,8 +271,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="asset-categories">
                 <?php
                 $categories = [
-                    'Homepage' => ['programs-listing', 'news-event', 'campus-life', 'photo-collage', 'social-media'],
-                    'About' => ['university-history', 'campus-life', 'social-media'],
+                    'Homepage' => ['programs-listing', 'news-event', 'campus-life', 'photo-collage', 'social-media', 'hero', 'intro-video'],
+                    'About' => ['university-history', 'campus-life', 'social-media', 'intro'],
                     'Admissions' => ['admissions-form', 'programs-listing', 'faq', 'academic-calendar'],
                     'Contact' => ['contact-info', 'campus-map', 'social-media']
                 ];

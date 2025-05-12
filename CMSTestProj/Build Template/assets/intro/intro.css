@@ -1,0 +1,81 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #fdfdfd;
+    color: #222;
+  }
+  
+  /* Intro Section */
+  .intro-section {
+    position: relative;
+    height: 70vh; /* Adjust height as needed */
+    background: url('placeholder-intro-bg.jpg') center/cover no-repeat; /* Placeholder image */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #fff;
+    overflow: hidden;
+  }
+  
+  .intro-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5); /* Dark overlay for better text visibility */
+    z-index: 1;
+  }
+  
+  .intro-content {
+    position: relative;
+    z-index: 2; /* Ensure content is above the overlay */
+    padding: 0 1.5rem;
+    max-width: 800px;
+  }
+  
+  .intro-title {
+    font-size: 2.5rem; /* Adjust size as needed */
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+  
+  .intro-subtitle {
+    font-size: 1.25rem; /* Adjust size as needed */
+    margin-bottom: 1.5rem;
+  }
+  
+  .intro-btn {
+    padding: 0.75rem 1.5rem;
+    background-color: #ffd700;
+    color: #000;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .intro-btn:hover {
+    background-color: #e6c200;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .intro-title {
+      font-size: 2rem; /* Responsive title size */
+    }
+  
+    .intro-subtitle {
+      font-size: 1rem; /* Responsive subtitle size */
+    }
+  }
+  

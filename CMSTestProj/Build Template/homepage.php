@@ -45,8 +45,8 @@ session_start();
 
         <div class="section-options">
           <label><input type="checkbox" name="section-intro"> Intro section</label>
-          <label><input type="checkbox" name="section-products"> Products section</label>
-          <label><input type="checkbox" name="section-services"> Services section</label>
+          <label><input type="checkbox" name="section-products"> Hero section</label>
+          <label><input type="checkbox" name="section-services">  Intro Video section</label>
           <label><input type="checkbox" name="section-appointments"> Appointments section</label>
           <label><input type="checkbox" name="section-digital"> Digital Products section</label>
           <label><input type="checkbox" name="section-about"> About section</label>
