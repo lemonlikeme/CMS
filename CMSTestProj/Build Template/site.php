@@ -1,14 +1,9 @@
 <?php
 
 session_start();
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $siteTitle = htmlspecialchars(trim($_POST['site-title']));
-
-    $_SESSION['site-title'] = $siteTitle;
-
-    // Redirect to next step
-    header("Location: homepage.php");
+if (!isset($_SESSION['user_id'])) {
+   
+    header("Location: ../index.php?login=required");
     exit();
 }
 ?>
@@ -43,11 +38,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="right-inner">
        <div class="content">
           <h1>Choose a site title</h1>
-           <form method="POST" action="">
-             <div class="form-group">
-               <label for="site-title">Site title</label>
-            <div class="note">This is the name of your site. You can change it later.</div>
-            <input type="text" id="site-title" name="site-title" placeholder="Your site title" maxlength="100" required />
+           <form id="submit_input" method="POST" action="save_preferences.php">
+              <div class="form-group">
+                <label for="site-title">Site title</label>
+              <div class="note">This is the name of your site. You can change it later.</div>
+            <input type="text" id="site-title" name="site_title" placeholder="Your site title" maxlength="100" required />
+            </form>
        </div>
     </div>
 
@@ -64,10 +60,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
       <div class="button-container">
-        <form action=".php" method="get">
-            <button type="submit" class="button-next">NEXT</button>
-            </form>
-          </div>
+        
+            <button type="submit" form="submit_input"class="button-next">NEXT</button>
+
+          </div>  
         </form>
       </div>
 

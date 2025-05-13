@@ -1,6 +1,9 @@
 <?php
 session_start();
-
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../index.php?login=required");
+    exit();
+}
 ?>
 <script>
         console.group('Form Submission Data');
@@ -42,15 +45,17 @@ session_start();
       <div class="content">
         <h1>Build your homepage</h1>
         <p class="subtext">Build your homepage section-by-section, adding as many or as few sections as you need.</p>
-
-        <div class="section-options">
-          <label><input type="checkbox" name="section-intro"> Intro section</label>
-          <label><input type="checkbox" name="section-products"> Hero section</label>
-          <label><input type="checkbox" name="section-services">  Intro Video section</label>
-          <label><input type="checkbox" name="section-appointments"> Appointments section</label>
-          <label><input type="checkbox" name="section-digital"> Digital Products section</label>
-          <label><input type="checkbox" name="section-about"> About section</label>
-        </div>
+        <form id="homepage_input" method="POST" action="save_preferences.php">
+          <div class="section-options">
+              <label><input type="checkbox" name="homepage_sections[]" value="intro"> Intro section</label>
+              <label><input type="checkbox" name="homepage_sections[]" value="products"> Products section</label>
+              <label><input type="checkbox" name="homepage_sections[]" value="services"> Services section</label>
+              <label><input type="checkbox" name="homepage_sections[]" value="appointments"> Appointments section</label>
+              <label><input type="checkbox" name="homepage_sections[]" value="digital"> Digital Products section</label>
+              <label><input type="checkbox" name="homepage_sections[]" value="about"> About section</label>
+           
+          </div>
+           </form>
       </div>
 
       <!-- Progress Bar -->
@@ -69,9 +74,9 @@ session_start();
         <form action="site.php" method="get">
           <button type="submit" class="button-back">BACK</button>
         </form>
-        <form action="pages.php" method="get">
-          <button type="submit" class="button-next">NEXT</button>
-        </form>
+       
+          <button type="submit" form="homepage_input" class="button-next">NEXT</button>
+        
       </div>
     </div>
   </div>
