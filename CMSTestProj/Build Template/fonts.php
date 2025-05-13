@@ -1,10 +1,25 @@
 <?php
-$selectedColors = [];
-if (isset($_GET['selectedColor'])) {
-    $selectedColors = json_decode($_GET['selectedColor'], true);
-    error_log('Received colors: ' . print_r($selectedColors, true));
+error_log("Test error log");
+session_start( );
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../index.php?login=required");
+    exit();
 }
+
 ?>
+<script>
+        console.group('Form Submission Data');
+        console.log('Site Title:', <?php echo json_encode($_SESSION['site_title'] ?? 'Not set'); ?>);
+        console.log('Submission Time:', <?php echo json_encode($_SESSION['submission_time'] ?? 'Not set'); ?>);
+        console.log('Homepage Sections (array):', <?php echo json_encode($_SESSION['homepage_sections'] ?? 'Not set'); ?>);
+        console.log('Homepage Sections (string):', <?php echo json_encode($_SESSION['homepage_sections_string'] ?? 'Not set'); ?>);
+        console.log('Pages Selected (array):', <?php echo json_encode($_SESSION['pages_selected'] ?? 'Not set'); ?>);
+        console.log('Pages Selected (string):', <?php echo json_encode($_SESSION['pages_selected_string'] ?? 'Not set'); ?>); 
+        console.log('Selected Palette:', <?php echo json_encode($_SESSION['selected_palette'] ?? 'Not set'); ?>);
+        console.log('Palette Colors:', <?php echo json_encode($_SESSION['selected_palette_colors'] ?? []); ?>);
+        console.log('Full Session:', <?php echo json_encode($_SESSION); ?>);
+        console.groupEnd();
+    </script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -96,6 +111,8 @@ if (isset($_GET['selectedColor'])) {
       </div>
 
       <div class="content">
+        <form id="font_input" method="POST" action="save_preferences.php">
+          
         <h1>Choose your fonts</h1>
         <p class="subtext">Select the fonts that best represent your brand's personality. You can always change them later.</p>
 
@@ -104,15 +121,18 @@ if (isset($_GET['selectedColor'])) {
           <div class="font-set">
             <div class="font-title">Modern</div>
             <div class="font-group">
-              <div class="font-option" data-font="helvetica" onclick="changeFont('Helvetica')">
+              <div class="font-option" onclick="changeFont('Helvetica Neue')">
+                <input type="radio" name="selected_font" value="Helvetica Neue" style="display:none;">
                 <span class="font-name">Helvetica Neue</span>
                 <span class="font-preview font-helvetica">The quick brown fox jumps over the lazy dog</span>
               </div>
-              <div class="font-option" data-font="roboto" onclick="changeFont('Roboto')">
+              <div class="font-option" onclick="changeFont('Roboto')">
+                <input type="radio" name="selected_font" value="Roboto" style="display:none;">
                 <span class="font-name">Roboto</span>
                 <span class="font-preview font-roboto">The quick brown fox jumps over the lazy dog</span>
               </div>
-              <div class="font-option" data-font="opensans" onclick="changeFont('Open Sans')">
+              <div class="font-option" onclick="changeFont('Open Sans')">
+                <input type="radio" name="selected_font" value="Open Sans" style="display:none;">
                 <span class="font-name">Open Sans</span>
                 <span class="font-preview font-opensans">The quick brown fox jumps over the lazy dog</span>
               </div>
@@ -123,15 +143,18 @@ if (isset($_GET['selectedColor'])) {
           <div class="font-set">
             <div class="font-title">Classic</div>
             <div class="font-group">
-              <div class="font-option" data-font="georgia" onclick="changeFont('Georgia')">
+              <div class="font-option" onclick="changeFont('Georgia')">
+                <input type="radio" name="selected_font" value="Georgia" style="display:none;">
                 <span class="font-name">Georgia</span>
                 <span class="font-preview font-georgia">The quick brown fox jumps over the lazy dog</span>
               </div>
-              <div class="font-option" data-font="times" onclick="changeFont('Times New Roman')">
+              <div class="font-option" onclick="changeFont('Times New Roman')">
+                <input type="radio" name="selected_font" value="Times New Roman" style="display:none;">
                 <span class="font-name">Times New Roman</span>
                 <span class="font-preview font-times">The quick brown fox jumps over the lazy dog</span>
               </div>
-              <div class="font-option" data-font="garamond" onclick="changeFont('Garamond')">
+              <div class="font-option"  onclick="changeFont('Garamond')">
+                <input type="radio" name="selected_font" value="Garamond" style="display:none;">
                 <span class="font-name">Garamond</span>
                 <span class="font-preview font-garamond">The quick brown fox jumps over the lazy dog</span>
               </div>
@@ -142,21 +165,25 @@ if (isset($_GET['selectedColor'])) {
           <div class="font-set">
             <div class="font-title">Creative</div>
             <div class="font-group">
-              <div class="font-option" data-font="playfair" onclick="changeFont('Playfair Display')">
+              <div class="font-option"  onclick="changeFont('Playfair Display')">
+                <input type="radio" name="selected_font" value="Playfair Display" style="display:none;">
                 <span class="font-name">Playfair Display</span>
                 <span class="font-preview font-playfair">The quick brown fox jumps over the lazy dog</span>
               </div>
-              <div class="font-option" data-font="montserrat" onclick="changeFont('Montserrat')">
+              <div class="font-option"  onclick="changeFont('Montserrat')">
+                <input type="radio" name="selected_font" value="Montserrat" style="display:none;">
                 <span class="font-name">Montserrat</span>
                 <span class="font-preview font-montserrat">The quick brown fox jumps over the lazy dog</span>
               </div>
-              <div class="font-option" data-font="poppins" onclick="changeFont('Poppins')">
+              <div class="font-option" onclick="changeFont('Poppins')">
+                <input type="radio" name="selected_font" value="Poppins" style="display:none;">
                 <span class="font-name">Poppins</span>
                 <span class="font-preview font-poppins">The quick brown fox jumps over the lazy dog</span>
               </div>
             </div>
           </div>
         </div>
+      </form>
       </div>
 
       <div class="progress-container">
@@ -173,11 +200,8 @@ if (isset($_GET['selectedColor'])) {
         <form action="colors.php" method="get">
           <button type="submit" class="button-back">BACK</button>
         </form>
-        <form action="builder/asset_manager.php" method="get" id="fontForm">
-          <input type="hidden" name="selectedFont" id="selectedFont" value="">
-          <input type="hidden" name="selectedColor" value="<?php echo htmlspecialchars($_GET['selectedColor'] ?? ''); ?>">
-          <button type="submit" class="button-next">NEXT</button>
-        </form>
+
+          <button type="submit" form="font_input" class="button-next">NEXT</button>
       </div>
     </div>
   </div>

@@ -13,21 +13,20 @@ if ($conn->connect_error) {
 $email = $_POST['email'];
 $passwordInput = $_POST['password'];
 
-$sql = "SELECT name, password FROM users WHERE email = ?";
+$sql = "SELECT id, name, password FROM users WHERE email = ?";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("s", $email);
 $stmt->execute();
 $stmt->store_result();
 
 if ($stmt->num_rows === 1) {
-    $stmt->bind_result($name, $hashedPassword);
+    $stmt->bind_result($id, $name, $hashedPassword);
     $stmt->fetch();
 
     if (password_verify($passwordInput, $hashedPassword)) {
+        $_SESSION['user_id'] = $id;
         $_SESSION['name'] = $name; 
-        echo "Session started\n";
-        echo "Name from DB: $name\n";
-        echo "Password correct: " . (password_verify($passwordInput, $hashedPassword) ? "yes" : "no");
+       
         header("Location: ../Get%20Started/get_Started.php"); 
         exit; 
     }
