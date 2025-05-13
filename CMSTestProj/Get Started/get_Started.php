@@ -11,7 +11,7 @@ if (!isset($_SESSION['name'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="get_Started.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
@@ -27,26 +27,25 @@ if (!isset($_SESSION['name'])) {
         </div>
       
         <div class="options">
-          <!-- Designer Works -->
           <div class="option-card">
             <img src="template1.jpg" alt="Designer Templates" class="preview" />
-            <h2>Designer Works</h2>
-            <p>Your gallery of works are displayed here.</p>
-            <button class="action-btn" onclick="location.href='gallery.php'">Continue to Gallery</button>
+            <h2>Designer Templates</h2>
+            <p>Choose from a curated set of professionally designed website templates.</p>
+            <button class="action-btn">Choose a Template</button>
           </div>
-
-          <!-- Build Template -->
+      
           <div class="option-card">
             <img src="template2.jpg" alt="Blueprint AI" class="preview" />
-            <h2>Build a Custom Website</h2>
+            <h2>Blueprint AI</h2>
             <p>Build a custom website guided by Placeholder.</p>
-            <button class="action-btn" onclick="location.href='../Build Template/site.php'">Build a Template</button>
+            <a href="../Build Template/site.php">
+            <button class="action-btn">Build a Template</button>
+            </a>
           </div>
-
         </div>
       
         <a href="../index.php">
-          <button class="action-btn back-btn">BACK</button>
+          <button class="action-btn">BACK</button>
         </a>
       </div>
 </body>
