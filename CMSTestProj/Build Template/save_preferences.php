@@ -1,5 +1,8 @@
 <?php
 session_start();
+
+error_log('POST data: ' . print_r($_POST, true));
+error_log('About to save font: ' . ($_POST['selected_font'] ?? 'NOT SET'));
 require_once('preferences_helper.php'); 
 
 $palette_colors = [

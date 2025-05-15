@@ -5,4 +5,7 @@ function changeFont(fontName) {
   
   previewText.style.fontFamily = fontName;
   previewParagraph.style.fontFamily = fontName;
+   const hiddenInput = document.getElementById('selectedFont');
+  if (hiddenInput) {
+    hiddenInput.value = fontName;
 }
