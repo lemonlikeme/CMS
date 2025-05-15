@@ -78,6 +78,7 @@ if (!isset($_SESSION['user_id'])) {
       transition: font-family 0.3s ease;
     }
   </style>
+  <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,700|Montserrat:400,700|Poppins:400,700|Roboto:400,700|Open+Sans:400,700&display=swap" rel="stylesheet">
 </head>
 <body class="fonts-preview">
   <div class="container">
@@ -112,8 +113,9 @@ if (!isset($_SESSION['user_id'])) {
 
       <div class="content">
         <form id="font_input" method="POST" action="save_preferences.php">
-          
-        <h1>Choose your fonts</h1>
+          <input type="hidden" id="selectedFont" name="selected_font" value="">
+
+        <h1>Choose your fonts</h1>  
         <p class="subtext">Select the fonts that best represent your brand's personality. You can always change them later.</p>
 
         <div class="font-options">
@@ -121,18 +123,18 @@ if (!isset($_SESSION['user_id'])) {
           <div class="font-set">
             <div class="font-title">Modern</div>
             <div class="font-group">
-              <div class="font-option" onclick="changeFont('Helvetica Neue')">
+              <div class="font-option" data-font="helvetica">
                 <input type="radio" name="selected_font" value="Helvetica Neue" style="display:none;">
                 <span class="font-name">Helvetica Neue</span>
                 <span class="font-preview font-helvetica">The quick brown fox jumps over the lazy dog</span>
               </div>
-              <div class="font-option" onclick="changeFont('Roboto')">
+              <div class="font-option" data-font="roboto">
                 <input type="radio" name="selected_font" value="Roboto" style="display:none;">
                 <span class="font-name">Roboto</span>
                 <span class="font-preview font-roboto">The quick brown fox jumps over the lazy dog</span>
               </div>
-              <div class="font-option" onclick="changeFont('Open Sans')">
-                <input type="radio" name="selected_font" value="Open Sans" style="display:none;">
+              <div class="font-option" data-font="opensans">
+                <input type="radio" name="selected_font"  value="Open Sans" style="display:none;">
                 <span class="font-name">Open Sans</span>
                 <span class="font-preview font-opensans">The quick brown fox jumps over the lazy dog</span>
               </div>
@@ -143,17 +145,17 @@ if (!isset($_SESSION['user_id'])) {
           <div class="font-set">
             <div class="font-title">Classic</div>
             <div class="font-group">
-              <div class="font-option" onclick="changeFont('Georgia')">
+              <div class="font-option" data-font="georgia">
                 <input type="radio" name="selected_font" value="Georgia" style="display:none;">
                 <span class="font-name">Georgia</span>
                 <span class="font-preview font-georgia">The quick brown fox jumps over the lazy dog</span>
               </div>
-              <div class="font-option" onclick="changeFont('Times New Roman')">
+              <div class="font-option" data-font="times">
                 <input type="radio" name="selected_font" value="Times New Roman" style="display:none;">
                 <span class="font-name">Times New Roman</span>
                 <span class="font-preview font-times">The quick brown fox jumps over the lazy dog</span>
               </div>
-              <div class="font-option"  onclick="changeFont('Garamond')">
+              <div class="font-option" data-font="garamond" >
                 <input type="radio" name="selected_font" value="Garamond" style="display:none;">
                 <span class="font-name">Garamond</span>
                 <span class="font-preview font-garamond">The quick brown fox jumps over the lazy dog</span>
@@ -165,17 +167,17 @@ if (!isset($_SESSION['user_id'])) {
           <div class="font-set">
             <div class="font-title">Creative</div>
             <div class="font-group">
-              <div class="font-option"  onclick="changeFont('Playfair Display')">
+              <div class="font-option" data-font="playfair" >
                 <input type="radio" name="selected_font" value="Playfair Display" style="display:none;">
                 <span class="font-name">Playfair Display</span>
                 <span class="font-preview font-playfair">The quick brown fox jumps over the lazy dog</span>
               </div>
-              <div class="font-option"  onclick="changeFont('Montserrat')">
+              <div class="font-option" data-font="montserrat">
                 <input type="radio" name="selected_font" value="Montserrat" style="display:none;">
                 <span class="font-name">Montserrat</span>
                 <span class="font-preview font-montserrat">The quick brown fox jumps over the lazy dog</span>
               </div>
-              <div class="font-option" onclick="changeFont('Poppins')">
+              <div class="font-option" data-font="poppins">
                 <input type="radio" name="selected_font" value="Poppins" style="display:none;">
                 <span class="font-name">Poppins</span>
                 <span class="font-preview font-poppins">The quick brown fox jumps over the lazy dog</span>

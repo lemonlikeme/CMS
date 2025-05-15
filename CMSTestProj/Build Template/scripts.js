@@ -3,10 +3,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Font selection functionality
   const fontOptions = document.querySelectorAll('.font-option');
-  const fontForm = document.getElementById('fontForm');
+  const fontForm = document.getElementById('font_input');
   const selectedFontInput = document.getElementById('selectedFont');
-  const previewCard = document.querySelector('.preview-card');
-  const previewText = previewCard?.querySelector('.preview-text');
+  const previewCard = document.querySelector('.pv-text-h2');
+  const previewText = previewCard?.querySelector('.pv-text-p');
 
   console.log('Font elements found:', {
     fontOptions: fontOptions.length,
@@ -26,34 +26,39 @@ document.addEventListener("DOMContentLoaded", () => {
       option.addEventListener('click', function() {
         console.log('Font option clicked');
         
-        // Remove selected class from all options
+        const previewH2 = document.querySelector('.pv-text-h2');
+        const previewP = document.querySelector('.pv-text-p');
+
         fontOptions.forEach(opt => opt.classList.remove('selected'));
         // Add selected class to clicked option
         this.classList.add('selected');
         
         // Get the font name and class
         const fontName = this.querySelector('.font-name').textContent;
+         if (selectedFontInput) {
+      selectedFontInput.value = fontName; // <-- THIS LINE sets the hidden input!
+    }
         const fontClass = this.getAttribute('data-font');
         selectedFont = fontName;
         
         console.log('Selected font:', fontName, 'Class:', fontClass);
 
         // Update preview card font
-        if (previewCard && previewText) {
-          // Remove all font classes from preview text
-          previewText.classList.remove(
-            'font-helvetica', 'font-roboto', 'font-opensans',
-            'font-georgia', 'font-times', 'font-garamond',
-            'font-playfair', 'font-montserrat', 'font-poppins'
-          );
+        if (previewH2 && previewP) {
+                previewH2.classList.remove(
+        'font-helvetica', 'font-roboto', 'font-opensans',
+        'font-georgia', 'font-times', 'font-garamond',
+        'font-playfair', 'font-montserrat', 'font-poppins'
+      );
+      previewP.classList.remove(
+        'font-helvetica', 'font-roboto', 'font-opensans',
+        'font-georgia', 'font-times', 'font-garamond',
+        'font-playfair', 'font-montserrat', 'font-poppins'
+      );
+      // Add the selected font class
+      previewH2.classList.add(`font-${fontClass.toLowerCase().replace(/\s/g, '')}`);
+      previewP.classList.add(`font-${fontClass.toLowerCase().replace(/\s/g, '')}`);
           
-          // Add the selected font class
-          previewText.classList.add(`font-${fontClass}`);
-          
-          // Store the font
-          if (selectedFontInput) {
-            selectedFontInput.value = fontName;
-          }
         }
       });
     });
@@ -317,7 +322,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const index = selectedPages.indexOf(page);
         if (index > -1) {
           selectedPages.splice(index, 1);
-          // Adjust currentIndex if needed
+       
           if (currentIndex >= selectedPages.length) {
             currentIndex = Math.max(0, selectedPages.length - 1);
           }
@@ -354,16 +359,5 @@ document.addEventListener("DOMContentLoaded", () => {
   showDefaultState();
 });
 
-function changeFont(fontName) {
-  document.querySelectorAll('.font').forEach(el => el.classList.remove('selected'));
-  const fonts = document.querySelectorAll('.font-preview');
-  fonts.forEach(preview => {
-    if (preview.textContent === fontName || preview.style.fontFamily.includes(fontName)) {
-      preview.parentElement.classList.add('selected');
-    }
-  });
 
-  // Apply font (update your preview area or app logic here)
-  document.querySelector('.canvas-preview')?.style.fontFamily = fontName;
-}
 

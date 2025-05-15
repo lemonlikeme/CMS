@@ -236,6 +236,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+<script>
+        console.group('Form Submission Data');
+        console.log('Submission Time:', <?php echo json_encode($_SESSION['submission_time'] ?? 'Not set'); ?>);
+        console.log('Site Title:', <?php echo json_encode($_SESSION['site_title'] ?? 'Not set'); ?>);
+        console.log('Font Selected:', <?php echo json_encode($_SESSION['selected_font'] ?? 'Not set'); ?>);
+        console.log('Homepage Sections (array):', <?php echo json_encode($_SESSION['homepage_sections'] ?? 'Not set'); ?>);
+        console.log('Homepage Sections (string):', <?php echo json_encode($_SESSION['homepage_sections_string'] ?? 'Not set'); ?>);
+        console.log('Pages Selected (array):', <?php echo json_encode($_SESSION['pages_selected'] ?? 'Not set'); ?>);
+        console.log('Pages Selected (string):', <?php echo json_encode($_SESSION['pages_selected_string'] ?? 'Not set'); ?>); 
+        console.log('Selected Palette:', <?php echo json_encode($_SESSION['selected_palette'] ?? 'Not set'); ?>);
+        console.log('Palette Colors:', <?php echo json_encode($_SESSION['selected_palette_colors'] ?? []); ?>);
+        console.log('Full Session:', <?php echo json_encode($_SESSION); ?>);
+        console.groupEnd();
+    </script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
