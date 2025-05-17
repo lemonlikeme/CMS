@@ -1,88 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
   console.log('DOM Content Loaded - Starting initialization');
-
-  // Font selection functionality
-  const fontOptions = document.querySelectorAll('.font-option');
-  const fontForm = document.getElementById('font_input');
-  const selectedFontInput = document.getElementById('selectedFont');
-  const previewCard = document.querySelector('.pv-text-h2');
-  const previewText = previewCard?.querySelector('.pv-text-p');
-
-  console.log('Font elements found:', {
-    fontOptions: fontOptions.length,
-    fontForm: !!fontForm,
-    selectedFontInput: !!selectedFontInput,
-    previewCard: !!previewCard,
-    previewText: !!previewText
-  });
-
-  if (fontOptions.length > 0) {
-    console.log('Initializing font selection');
-    
-    // Store selected font
-    let selectedFont = '';
-
-    fontOptions.forEach(option => {
-      option.addEventListener('click', function() {
-        console.log('Font option clicked');
-        
-        const previewH2 = document.querySelector('.pv-text-h2');
-        const previewP = document.querySelector('.pv-text-p');
-
-        fontOptions.forEach(opt => opt.classList.remove('selected'));
-        // Add selected class to clicked option
-        this.classList.add('selected');
-        
-        // Get the font name and class
-        const fontName = this.querySelector('.font-name').textContent;
-         if (selectedFontInput) {
-      selectedFontInput.value = fontName; // <-- THIS LINE sets the hidden input!
-    }
-        const fontClass = this.getAttribute('data-font');
-        selectedFont = fontName;
-        
-        console.log('Selected font:', fontName, 'Class:', fontClass);
-
-        // Update preview card font
-        if (previewH2 && previewP) {
-                previewH2.classList.remove(
-        'font-helvetica', 'font-roboto', 'font-opensans',
-        'font-georgia', 'font-times', 'font-garamond',
-        'font-playfair', 'font-montserrat', 'font-poppins'
-      );
-      previewP.classList.remove(
-        'font-helvetica', 'font-roboto', 'font-opensans',
-        'font-georgia', 'font-times', 'font-garamond',
-        'font-playfair', 'font-montserrat', 'font-poppins'
-      );
-      // Add the selected font class
-      previewH2.classList.add(`font-${fontClass.toLowerCase().replace(/\s/g, '')}`);
-      previewP.classList.add(`font-${fontClass.toLowerCase().replace(/\s/g, '')}`);
-          
-        }
-      });
-    });
-
-    // Handle form submission
-    const fontNextBtn = document.querySelector('.button-next');
-    if (fontNextBtn) {
-      fontNextBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        
-        if (!selectedFont) {
-          alert('Please select a font before proceeding.');
-          return;
-        }
-
-        // Submit the form
-        if (fontForm) {
-          fontForm.submit();
-        }
-      });
-    }
-  }
-
-  // Color palette selection functionality
+// Color palette selection functionality
   const palettes = document.querySelectorAll('.palette');
   const colorForm = document.getElementById('colorForm');
   const selectedColorInput = document.getElementById('selectedColor');
@@ -157,11 +75,71 @@ document.addEventListener("DOMContentLoaded", () => {
   if (nextBtn) {
     nextBtn.addEventListener("click", (e) => {
       e.preventDefault();
+
+      // Get the form
+      const formId = nextBtn.getAttribute('form');
+      const targetForm = formId ? document.getElementById(formId) : nextBtn.closest('form');
+      
+      if (!targetForm) {
+        console.error('No form found for next button');
+        return;
+      }
+
+      // Skip validation if the form has custom validation
+      if (targetForm.getAttribute('data-custom-validation') === 'true') {
+        console.log('Form has custom validation, skipping scripts.js validation');
+        return; // Let the form's own validation handle it
+      }
+
+      // Validation based on form ID
+      if (formId === 'submit_input') {
+        // Site title validation
+        const siteTitleInput = targetForm.querySelector('input[name="site_title"]');
+        if (!siteTitleInput || !siteTitleInput.value.trim()) {
+          alert('Please enter a site title before proceeding.');
+          return;
+        }
+      } else if (formId === 'homepage_input') {
+        // Homepage sections validation
+        const selectedSections = targetForm.querySelectorAll('input[name="homepage_sections[]"]:checked');
+        if (selectedSections.length === 0) {
+          alert('Please select at least one homepage section before proceeding.');
+          return;
+        }
+      } else if (formId === 'pages_input') {
+        // Pages validation
+        const selectedPages = targetForm.querySelectorAll('input[name="pages_selected[]"]:checked');
+        if (selectedPages.length === 0) {
+          alert('Please select at least one page before proceeding.');
+          return;
+        }
+      } else if (formId === 'colorForm') {
+        // Color validation
+        const selectedColor = targetForm.querySelector('input[name="selected_palette"]').value;
+        if (!selectedColor) {
+          alert('Please select a color palette before proceeding.');
+          return;
+        }
+      } else if (formId === 'font_input') {
+        // Let bTfont.js handle font validation, skip this check
+        console.log('Font form detected, proceeding without validation in scripts.js');
+      }
+
       if (currentStep < steps.length - 1) {
         updateSteps(currentStep + 1);
       }
+      
       setTimeout(() => {
-        window.location.href = nextBtn.closest('form').getAttribute("action");
+        // Debug form data
+        const formData = new FormData(targetForm);
+        console.log('Form ID:', formId);
+        console.log('Form found:', targetForm.id);
+        console.log('Form method:', targetForm.method);
+        console.log('Form action:', targetForm.action);
+        for (let pair of formData.entries()) {
+          console.log(pair[0] + ': ' + pair[1]);
+        }
+        targetForm.submit();
       }, 400);
     });
   }

@@ -48,6 +48,14 @@ if (!isset($_SESSION['user_id'])) {
     }
     <?php endif; ?>
 
+    /* Hide radio buttons visually but keep them accessible */
+    .font-option input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
     /* Font selection styles */
     .font-option {
       cursor: pointer;
@@ -56,6 +64,7 @@ if (!isset($_SESSION['user_id'])) {
       border: 1px solid #ddd;
       border-radius: 8px;
       margin-bottom: 0.5rem;
+      position: relative;
     }
     
     .font-option.selected {
@@ -112,80 +121,78 @@ if (!isset($_SESSION['user_id'])) {
       </div>
 
       <div class="content">
-        <form id="font_input" method="POST" action="save_preferences.php">
-          <input type="hidden" id="selectedFont" name="selected_font" value="">
+        <form id="font_input" method="POST" action="process_font.php" data-custom-validation="true">
+          <h1>Choose your fonts</h1>  
+          <p class="subtext">Select the fonts that best represent your brand's personality. You can always change them later.</p>
 
-        <h1>Choose your fonts</h1>  
-        <p class="subtext">Select the fonts that best represent your brand's personality. You can always change them later.</p>
+          <div class="font-options">
+            <!-- Modern -->
+            <div class="font-set">
+              <div class="font-title">Modern</div>
+              <div class="font-group">
+                <div class="font-option" data-font="helvetica">
+                  <input type="radio" name="selected_font" value="Helvetica Neue">
+                  <span class="font-name">Helvetica Neue</span>
+                  <span class="font-preview font-helvetica">The quick brown fox jumps over the lazy dog</span>
+                </div>
+                <div class="font-option" data-font="roboto">
+                  <input type="radio" name="selected_font" value="Roboto">
+                  <span class="font-name">Roboto</span>
+                  <span class="font-preview font-roboto">The quick brown fox jumps over the lazy dog</span>
+                </div>
+                <div class="font-option" data-font="opensans">
+                  <input type="radio" name="selected_font" value="Open Sans">
+                  <span class="font-name">Open Sans</span>
+                  <span class="font-preview font-opensans">The quick brown fox jumps over the lazy dog</span>
+                </div>
+              </div>
+            </div>
 
-        <div class="font-options">
-          <!-- Modern -->
-          <div class="font-set">
-            <div class="font-title">Modern</div>
-            <div class="font-group">
-              <div class="font-option" data-font="helvetica">
-                <input type="radio" name="selected_font" value="Helvetica Neue" style="display:none;">
-                <span class="font-name">Helvetica Neue</span>
-                <span class="font-preview font-helvetica">The quick brown fox jumps over the lazy dog</span>
+            <!-- Classic -->
+            <div class="font-set">
+              <div class="font-title">Classic</div>
+              <div class="font-group">
+                <div class="font-option" data-font="georgia">
+                  <input type="radio" name="selected_font" value="Georgia">
+                  <span class="font-name">Georgia</span>
+                  <span class="font-preview font-georgia">The quick brown fox jumps over the lazy dog</span>
+                </div>
+                <div class="font-option" data-font="times">
+                  <input type="radio" name="selected_font" value="Times New Roman">
+                  <span class="font-name">Times New Roman</span>
+                  <span class="font-preview font-times">The quick brown fox jumps over the lazy dog</span>
+                </div>
+                <div class="font-option" data-font="garamond">
+                  <input type="radio" name="selected_font" value="Garamond">
+                  <span class="font-name">Garamond</span>
+                  <span class="font-preview font-garamond">The quick brown fox jumps over the lazy dog</span>
+                </div>
               </div>
-              <div class="font-option" data-font="roboto">
-                <input type="radio" name="selected_font" value="Roboto" style="display:none;">
-                <span class="font-name">Roboto</span>
-                <span class="font-preview font-roboto">The quick brown fox jumps over the lazy dog</span>
-              </div>
-              <div class="font-option" data-font="opensans">
-                <input type="radio" name="selected_font"  value="Open Sans" style="display:none;">
-                <span class="font-name">Open Sans</span>
-                <span class="font-preview font-opensans">The quick brown fox jumps over the lazy dog</span>
+            </div>
+
+            <!-- Creative -->
+            <div class="font-set">
+              <div class="font-title">Creative</div>
+              <div class="font-group">
+                <div class="font-option" data-font="playfair">
+                  <input type="radio" name="selected_font" value="Playfair Display">
+                  <span class="font-name">Playfair Display</span>
+                  <span class="font-preview font-playfair">The quick brown fox jumps over the lazy dog</span>
+                </div>
+                <div class="font-option" data-font="montserrat">
+                  <input type="radio" name="selected_font" value="Montserrat">
+                  <span class="font-name">Montserrat</span>
+                  <span class="font-preview font-montserrat">The quick brown fox jumps over the lazy dog</span>
+                </div>
+                <div class="font-option" data-font="poppins">
+                  <input type="radio" name="selected_font" value="Poppins">
+                  <span class="font-name">Poppins</span>
+                  <span class="font-preview font-poppins">The quick brown fox jumps over the lazy dog</span>
+                </div>
               </div>
             </div>
           </div>
-
-          <!-- Classic -->
-          <div class="font-set">
-            <div class="font-title">Classic</div>
-            <div class="font-group">
-              <div class="font-option" data-font="georgia">
-                <input type="radio" name="selected_font" value="Georgia" style="display:none;">
-                <span class="font-name">Georgia</span>
-                <span class="font-preview font-georgia">The quick brown fox jumps over the lazy dog</span>
-              </div>
-              <div class="font-option" data-font="times">
-                <input type="radio" name="selected_font" value="Times New Roman" style="display:none;">
-                <span class="font-name">Times New Roman</span>
-                <span class="font-preview font-times">The quick brown fox jumps over the lazy dog</span>
-              </div>
-              <div class="font-option" data-font="garamond" >
-                <input type="radio" name="selected_font" value="Garamond" style="display:none;">
-                <span class="font-name">Garamond</span>
-                <span class="font-preview font-garamond">The quick brown fox jumps over the lazy dog</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Creative -->
-          <div class="font-set">
-            <div class="font-title">Creative</div>
-            <div class="font-group">
-              <div class="font-option" data-font="playfair" >
-                <input type="radio" name="selected_font" value="Playfair Display" style="display:none;">
-                <span class="font-name">Playfair Display</span>
-                <span class="font-preview font-playfair">The quick brown fox jumps over the lazy dog</span>
-              </div>
-              <div class="font-option" data-font="montserrat">
-                <input type="radio" name="selected_font" value="Montserrat" style="display:none;">
-                <span class="font-name">Montserrat</span>
-                <span class="font-preview font-montserrat">The quick brown fox jumps over the lazy dog</span>
-              </div>
-              <div class="font-option" data-font="poppins">
-                <input type="radio" name="selected_font" value="Poppins" style="display:none;">
-                <span class="font-name">Poppins</span>
-                <span class="font-preview font-poppins">The quick brown fox jumps over the lazy dog</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </form>
+        </form>
       </div>
 
       <div class="progress-container">
@@ -208,7 +215,7 @@ if (!isset($_SESSION['user_id'])) {
     </div>
   </div>
 
-  <script src="scripts.js"></script>
   <script src="../jscripts/bTfont.js"></script>
+  <script src="scripts.js"></script>
 </body>
 </html>
