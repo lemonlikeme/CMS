@@ -2,6 +2,13 @@
 let state = window.assetState || {
     assets: [],
     styles: [],
+    currentPage: 'home', // Add current page tracking
+    pages: {
+        home: { title: 'Home', assets: {} },
+        about: { title: 'About', assets: {} },
+        admissions: { title: 'Admissions', assets: {} },
+        contact: { title: 'Contact', assets: {} }
+    },
     header: {
         logo: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="50" viewBox="0 0 200 50"%3E%3Crect width="200" height="50" fill="%23f0f0f0"/%3E%3Ctext x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="16" fill="%23999"%3EUniversity Logo%3C/text%3E%3C/svg%3E',
         title: 'University Name',
@@ -41,11 +48,564 @@ let state = window.assetState || {
     }
 };
 
+// Function to update preview with current state
+function updatePreview() {
+    try {
+        console.log('Updating preview with current state');
+        const preview = document.getElementById('preview');
+        if (!preview) {
+            console.error('Preview element not found');
+            return;
+        }
+
+        // Clear preview content except header and footer
+        while (preview.firstChild) {
+            preview.removeChild(preview.firstChild);
+        }
+
+        // Add header if it exists in state
+        if (state.header) {
+            const headerTemplate = document.getElementById('headerTemplate');
+            if (headerTemplate) {
+                const header = document.importNode(headerTemplate.content, true);
+                
+                // Apply state to header elements
+                const siteLogo = header.querySelector('.site-logo');
+                if (siteLogo && state.header.logo) {
+                    siteLogo.src = state.header.logo;
+                }
+                
+                const siteTitle = header.querySelector('.site-title');
+                if (siteTitle && state.header.title) {
+                    siteTitle.textContent = state.header.title;
+                }
+                
+                const navLinks = header.querySelectorAll('.main-nav a');
+                if (navLinks.length && state.header.nav) {
+                    const navKeys = Object.keys(state.header.nav);
+                    for (let i = 0; i < Math.min(navLinks.length, navKeys.length); i++) {
+                        navLinks[i].textContent = state.header.nav[navKeys[i]];
+                        navLinks[i].setAttribute('data-page-target', navKeys[i]);
+                    }
+                }
+                
+                // Apply header styles
+                const headerElement = header.querySelector('.site-header');
+                if (headerElement && state.header.styles) {
+                    headerElement.style.backgroundColor = state.header.styles.bgColor || '';
+                    headerElement.style.color = state.header.styles.textColor || '';
+                    
+                    const navItems = header.querySelectorAll('.main-nav a');
+                    navItems.forEach(item => {
+                        item.style.color = state.header.styles.navColor || '';
+                    });
+                }
+                
+                preview.appendChild(header);
+            }
+        }
+
+        // Add assets to preview
+        if (state.assets) {
+            // Sort assets by position if they have position property
+            const sortedAssets = Object.entries(state.assets).sort((a, b) => {
+                const posA = a[1].position || 0;
+                const posB = b[1].position || 0;
+                return posA - posB;
+            });
+            
+            for (const [assetId, asset] of sortedAssets) {
+                addAssetToPreview(asset, assetId);
+            }
+        }
+
+        // Add footer if it exists in state
+        if (state.footer) {
+            const footerTemplate = document.getElementById('footerTemplate');
+            if (footerTemplate) {
+                const footer = document.importNode(footerTemplate.content, true);
+                
+                // Apply state to footer elements
+                const contactTitle = footer.querySelector('[data-editable="footer_contact_title"]');
+                if (contactTitle && state.footer.contact?.title) {
+                    contactTitle.textContent = state.footer.contact.title;
+                }
+                
+                const address = footer.querySelector('[data-editable="footer_address"]');
+                if (address && state.footer.contact?.address) {
+                    address.textContent = state.footer.contact.address;
+                }
+                
+                const phone = footer.querySelector('[data-editable="footer_phone"]');
+                if (phone && state.footer.contact?.phone) {
+                    phone.textContent = state.footer.contact.phone;
+                }
+                
+                const email = footer.querySelector('[data-editable="footer_email"]');
+                if (email && state.footer.contact?.email) {
+                    email.textContent = state.footer.contact.email;
+                }
+                
+                const socialTitle = footer.querySelector('[data-editable="footer_social_title"]');
+                if (socialTitle && state.footer.social?.title) {
+                    socialTitle.textContent = state.footer.social.title;
+                }
+                
+                const socialLinks = footer.querySelectorAll('.social-links a');
+                if (socialLinks.length && state.footer.social) {
+                    const socialKeys = ['facebook', 'twitter', 'instagram'];
+                    for (let i = 0; i < Math.min(socialLinks.length, socialKeys.length); i++) {
+                        if (state.footer.social[socialKeys[i]]) {
+                            socialLinks[i].textContent = state.footer.social[socialKeys[i]];
+                        }
+                    }
+                }
+                
+                const copyright = footer.querySelector('[data-editable="footer_copyright"]');
+                if (copyright && state.footer.copyright) {
+                    copyright.textContent = state.footer.copyright;
+                }
+                
+                // Apply footer styles
+                const footerElement = footer.querySelector('.site-footer');
+                if (footerElement && state.footer.styles) {
+                    footerElement.style.backgroundColor = state.footer.styles.bgColor || '';
+                    footerElement.style.color = state.footer.styles.textColor || '';
+                    
+                    const links = footer.querySelectorAll('a');
+                    links.forEach(link => {
+                        link.style.color = state.footer.styles.linkColor || '';
+                    });
+                }
+                
+                preview.appendChild(footer);
+            }
+        }
+        
+        console.log('Preview updated successfully');
+    } catch (error) {
+        console.error('Error updating preview:', error);
+    }
+}
+
+// Track if assets should be saved to page-specific storage
+let savingToPage = true;
+
+// Track if there are unsaved changes
+let hasUnsavedChanges = false;
+let lastSaveTime = Date.now();
+let saveTimeout = null;
+let currentPageId = '';
+
+// Function to add asset to preview
+function addAssetToPreview(asset, assetId) {
+    const preview = document.getElementById('preview');
+    if (!preview) {
+        console.error('Preview element not found when adding asset');
+        return;
+    }
+    
+    console.log('Adding asset to preview:', assetId, asset.type);
+    
+    // Calculate position for new asset (if not already set)
+    if (!asset.position) {
+        // Count existing assets to determine next position
+        const existingAssets = Object.values(state.assets || {});
+        const maxPosition = existingAssets.reduce((max, a) => 
+            Math.max(max, a.position || 0), 0);
+        asset.position = maxPosition + 1;
+        console.log('Assigned position', asset.position, 'to new asset');
+    }
+    
+    try {
+        // Create asset container
+        const container = document.createElement('div');
+        container.className = 'asset';
+        container.dataset.assetId = assetId;
+        container.dataset.position = asset.position;
+        
+        // Add asset HTML
+        container.innerHTML = asset.html;
+        
+        // Apply global styles to asset if available
+        if (state.globalStyles) {
+            const headings = container.querySelectorAll('h1, h2, h3, h4, h5, h6');
+            headings.forEach(heading => {
+                heading.style.fontFamily = state.globalStyles.fontFamily || 'inherit';
+                heading.style.color = state.globalStyles.primaryColor || 'inherit';
+            });
+            
+            const paragraphs = container.querySelectorAll('p');
+            paragraphs.forEach(p => {
+                p.style.fontFamily = state.globalStyles.fontFamily || 'inherit';
+                p.style.color = state.globalStyles.secondaryColor || 'inherit';
+            });
+            
+            const buttons = container.querySelectorAll('button, .btn');
+            buttons.forEach(button => {
+                button.style.backgroundColor = state.globalStyles.primaryColor || '#4A90E2';
+                button.style.color = state.globalStyles.backgroundColor || '#ffffff';
+                button.style.fontFamily = state.globalStyles.fontFamily || 'inherit';
+            });
+        }
+        
+        // Add position number and edit controls
+        const controls = document.createElement('div');
+        controls.className = 'asset-controls';
+        controls.innerHTML = `
+            <div class="position-indicator" title="Position">${asset.position || 1}</div>
+            <button class="edit-btn" title="Edit">✎</button>
+            <button class="delete-btn" title="Delete">×</button>
+        `;
+        container.appendChild(controls);
+        
+        // Add event listeners for edit and delete buttons
+        controls.querySelector('.edit-btn').addEventListener('click', () => {
+            console.log('Edit button clicked for asset:', assetId);
+            showProperties(assetId);
+        });
+        
+        controls.querySelector('.delete-btn').addEventListener('click', () => {
+            console.log('Delete button clicked for asset:', assetId);
+            if (confirm('Are you sure you want to delete this asset?')) {
+                delete state.assets[assetId];
+                updatePreview();
+                saveState();
+                closeProperties();
+            }
+        });
+        
+        // Apply any properties if available
+        if (asset.properties) {
+            console.log('Applying properties to asset elements');
+            Object.entries(asset.properties).forEach(([key, prop]) => {
+                const element = container.querySelector(prop.selector);
+                if (element) {
+                    if (prop.type === 'image') {
+                        element.src = prop.value || '';
+                    } else if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                        element.value = prop.value || '';
+                    } else {
+                        element.textContent = prop.value || '';
+                    }
+                }
+            });
+        }
+        
+        preview.appendChild(container);
+        console.log('Asset added to preview successfully');
+    } catch (error) {
+        console.error('Error adding asset to preview:', error);
+    }
+}
+
+// Get the page_id from URL
+function getPageIdFromUrl() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('page_id') || '';
+}
+
+// Function to show error messages
+function showError(message) {
+    const preview = document.getElementById('preview');
+    if (preview && !preview.querySelector('.error-message')) {
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.innerHTML = `
+            <div style="background-color: #ffebee; color: #c62828; padding: 15px; margin: 20px; border-radius: 4px; border-left: 4px solid #c62828;">
+                <strong>Error:</strong> ${message}
+                <button onclick="this.parentNode.remove()" style="float: right; background: none; border: none; color: #c62828; cursor: pointer; font-weight: bold;">×</button>
+            </div>
+        `;
+        preview.insertAdjacentElement('afterbegin', errorDiv);
+    }
+}
+
+// Function to show notifications
+function showNotification(message, type = 'info') {
+    // Create notification container if it doesn't exist
+    let notificationContainer = document.querySelector('.notification-container');
+    if (!notificationContainer) {
+        notificationContainer = document.createElement('div');
+        notificationContainer.className = 'notification-container';
+        document.body.appendChild(notificationContainer);
+    }
+    
+    // Create notification
+    const notification = document.createElement('div');
+    notification.className = 'notification ' + type;
+    notification.textContent = message;
+    
+    // Add to container
+    notificationContainer.appendChild(notification);
+    
+    // Auto remove after 3 seconds
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
+
+// Function to mark changes as unsaved
+function markAsUnsaved() {
+    hasUnsavedChanges = true;
+    
+    // Clear any existing save timeout
+    if (saveTimeout) {
+        clearTimeout(saveTimeout);
+    }
+    
+    // Set a visual indicator that changes are unsaved
+    const saveButton = document.getElementById('savePreview');
+    if (saveButton) {
+        saveButton.classList.add('unsaved');
+        saveButton.textContent = 'Save Changes*';
+    }
+    
+    // Set auto-save timeout (every 30 seconds)
+    saveTimeout = setTimeout(() => {
+        if (hasUnsavedChanges) {
+            saveState();
+        }
+    }, 30000);
+}
+
+// Function to load user assets from the database
+async function loadUserAssets() {
+    try {
+        console.log('Loading user assets from database');
+        
+        // Get page_id from URL parameter
+        currentPageId = getPageIdFromUrl();
+        if (!currentPageId) {
+            console.warn('No page_id found in URL, using default page');
+            currentPageId = 'homepage';
+        }
+        
+        console.log('Loading assets for page_id:', currentPageId);
+        
+        // Show loading message in preview
+        const preview = document.getElementById('preview');
+        if (preview) {
+            preview.innerHTML = '<div class="loading" style="text-align: center; padding: 50px; font-size: 16px;">Loading your assets...</div>';
+        }
+        
+        const response = await fetch('asset_manager.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `action=load_user_assets&page_id=${encodeURIComponent(currentPageId)}`
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log('Load user assets response:', data);
+        
+        if (data.success && data.state) {
+            // Update state with loaded data
+            state = data.state;
+            console.log('State updated from database:', state);
+            
+            // Update the preview with the loaded assets
+            updatePreview();
+            
+            // Show success message
+            showNotification('Assets loaded successfully');
+        } else {
+            console.error('Failed to load assets:', data.error || 'Unknown error');
+            showError('Failed to load assets: ' + (data.error || 'Unknown error'));
+            
+            // Still update preview with default state
+            updatePreview();
+        }
+    } catch (error) {
+        console.error('Error loading user assets:', error);
+        showError('Error loading assets: ' + error.message);
+        
+        // Continue with session state if there's an error loading from DB
+        updatePreview();
+    }
+}
+
+// Function to cleanup unsaved data from database
+async function cleanupUnsavedData() {
+    try {
+        // Only attempt cleanup if the last save was more than 10 seconds ago
+        // This prevents cleanup during normal save operations
+        if (Date.now() - lastSaveTime > 10000) {
+            console.log('Cleaning up unsaved data...');
+            
+            const pageId = currentPageId || getPageIdFromUrl() || 'homepage';
+            
+            // Call cleanup endpoint
+            await fetch('asset_manager.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `action=cleanup_unsaved&page_id=${encodeURIComponent(pageId)}&last_save=${lastSaveTime}`
+            });
+            
+            console.log('Cleanup request sent');
+        }
+    } catch (error) {
+        console.error('Error during cleanup:', error);
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM content loaded - setting up event handlers');
+    
+    // Add CSS for notifications
+    const style = document.createElement('style');
+    style.textContent = `
+        .notification-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 300px;
+        }
+        .notification {
+            background: white;
+            border-left: 4px solid #4A90E2;
+            padding: 12px;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slide-in 0.3s ease;
+        }
+        .notification.closing {
+            animation: slide-out 0.3s ease forwards;
+        }
+        .notification.success {
+            border-left-color: #4CAF50;
+        }
+        .notification.error {
+            border-left-color: #F44336;
+        }
+        .notification-content {
+            margin-right: 8px;
+        }
+        .notification-close {
+            background: transparent;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0 4px;
+        }
+        @keyframes slide-in {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slide-out {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Load user assets from database
+    loadUserAssets();
+    
+    // Setup window unload warning for unsaved changes
+    window.addEventListener('beforeunload', function(e) {
+        // If there are unsaved changes, show a warning
+        if (hasUnsavedChanges) {
+            // Attempt to cleanup unsaved data
+            cleanupUnsavedData();
+            
+            // Standard message (browsers will show their own message)
+            const message = 'You have unsaved changes that will be lost if you leave this page.';
+            e.returnValue = message;
+            return message;
+        }
+    });
+    
+    // Save button click handler
+    const saveButton = document.getElementById('savePreview');
+    if (saveButton) {
+        saveButton.addEventListener('click', function() {
+            saveState();
+        });
+    }
+    
+    // Ensure page tabs work - failsafe direct navigation
+    function setupPageTabNavigation() {
+        console.log('Setting up page tab navigation');
+        const pageTabs = document.querySelectorAll('.page-tab');
+        console.log('Found page tabs:', pageTabs.length);
+        
+        // Add a backup click handler in case the href doesn't work
+        pageTabs.forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                const pageKey = this.getAttribute('data-page');
+                if (pageKey) {
+                    console.log('Page tab clicked for:', pageKey);
+                    
+                    // Navigate directly to the page with the correct parameter
+                    window.location.href = '?page=' + pageKey;
+                    
+                    // Prevent default to avoid double navigation
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        });
+    }
+    
+    // Setup page tab navigation
+    setTimeout(setupPageTabNavigation, 100); // Small delay to ensure DOM is ready
+    
+    // Setup tab navigation
+    function setupNavigation() {
+        const navLinks = document.querySelectorAll('.main-nav .nav-link');
+        console.log('Found navigation links:', navLinks.length);
+        
+        navLinks.forEach(link => {
+            const pageTarget = link.getAttribute('data-page-target');
+            console.log('Setting up navigation for:', pageTarget);
+            
+            // Remove any existing listeners and set up new ones
+            const newLink = link.cloneNode(true);
+            if (link.parentNode) {
+                link.parentNode.replaceChild(newLink, link);
+                
+                newLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Navigation clicked for page:', pageTarget);
+                    switchPage(pageTarget);
+                    return false;
+                });
+            }
+        });
+    }
+    
+    // Setup initial navigation
+    setTimeout(setupNavigation, 500); // Short delay to ensure DOM is ready
+    
+    // Re-attach navigation after each preview update
+    const originalUpdatePreview = updatePreview;
+    updatePreview = function() {
+        originalUpdatePreview.apply(this, arguments);
+        setTimeout(setupNavigation, 100);
+    };
+    
     // Asset button click handlers
     const assetButtons = document.querySelectorAll('.asset-btn');
+    console.log('Found asset buttons:', assetButtons.length);
+    
     assetButtons.forEach(button => {
         button.addEventListener('click', async () => {
+            console.log('Asset button clicked:', button.textContent.trim());
             const assetType = button.dataset.asset;
             
             // Disable button and show loading state
@@ -54,6 +614,7 @@ document.addEventListener('DOMContentLoaded', function() {
             button.textContent = 'Loading...';
             
             try {
+                console.log('Loading asset:', assetType);
                 const response = await fetch('asset_manager.php', {
                     method: 'POST',
                     headers: {
@@ -65,664 +626,67 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (!response.ok) throw new Error('Network response was not ok');
                 
                 const data = await response.json();
+                console.log('Asset response received:', data);
+                
                 if (data.success && data.html && data.css) {
                     // Generate unique ID for the asset
                     const assetId = `asset_${Date.now()}`;
+                    console.log('Generated asset ID:', assetId);
                     
-                    // Add to state
+                    // Continue with the rest of your asset processing...
+                    // ...
+                    
+                    // Extract asset properties for configuration
+                    const properties = extractProperties(data.html);
+                    console.log('Extracted properties:', properties);
+                    
+                    // Create asset in state
                     state.assets[assetId] = {
                         type: assetType,
                         html: data.html,
                         css: data.css,
-                        properties: extractProperties(data.html)
+                        config: {},
+                        properties: properties
                     };
                     
-                    // Update preview
-                    updatePreview();
+                    // Initialize config with default values
+                    for (const key in properties) {
+                        if (properties[key].default) {
+                            state.assets[assetId].config[key] = properties[key].default;
+                        }
+                    }
                     
-                    // Show properties panel
+                    // Add asset to preview
+                    addAssetToPreview(state.assets[assetId], assetId);
+                    
+                    // Show asset properties panel
                     showProperties(assetId);
                     
-                    // Save state
-                    saveState();
+                    // Mark the state as unsaved
+                    markAsUnsaved();
+                    
+                    // Show success notification
+                    showNotification(`Added ${assetType.replace(/-/g, ' ')} to page`, 'success');
                 } else {
-                    throw new Error(data.error || 'Failed to load asset');
+                    console.error('Failed to load asset:', data.error || 'Unknown error');
+                    showNotification(`Failed to load ${assetType}: ${data.error || 'Unknown error'}`, 'error');
                 }
             } catch (error) {
                 console.error('Error loading asset:', error);
-                alert(`Failed to load asset: ${error.message}`);
+                showNotification(`Error loading asset: ${error.message}`, 'error');
             } finally {
-                // Reset button state
+                // Re-enable button
                 button.disabled = false;
                 button.textContent = originalText;
             }
         });
     });
-
-    // Save preview button
-    const saveButton = document.getElementById('savePreview');
-    if (saveButton) {
-        saveButton.addEventListener('click', () => {
-            saveState();
-            alert('Changes saved successfully!');
-        });
+    
+    // Handler for Edit Header & Footer button
+    const editHeaderFooterBtn = document.getElementById('editHeaderFooter');
+    if (editHeaderFooterBtn) {
+        editHeaderFooterBtn.addEventListener('click', showHeaderFooterProperties);
     }
-
-    // Extract editable properties from HTML
-    function extractProperties(html) {
-        const properties = {};
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        
-        // Find all elements with data-editable attribute
-        doc.querySelectorAll('[data-editable]').forEach(element => {
-            const key = element.dataset.editable;
-            const type = element.dataset.type || 'text';
-            properties[key] = {
-                type: type,
-                value: element.textContent,
-                selector: `[data-editable="${key}"]`
-            };
-        });
-
-        // Find all images with data-editable attribute
-        doc.querySelectorAll('img[data-editable]').forEach(element => {
-            const key = element.dataset.editable;
-            properties[key] = {
-                type: 'image',
-                value: element.src,
-                selector: `img[data-editable="${key}"]`
-            };
-        });
-
-        return properties;
-    }
-
-    // Show properties panel for an asset
-    function showProperties(assetId) {
-        console.log('Showing properties for asset:', assetId); // Debug log
-        const propertiesPanel = document.getElementById('assetProperties');
-        if (!propertiesPanel) {
-            console.error('Properties panel not found');
-            return;
-        }
-
-        const propertiesContent = propertiesPanel.querySelector('.properties-content');
-        const asset = state.assets[assetId];
-        
-        if (!asset) {
-            console.error('Asset not found:', assetId);
-            return;
-        }
-
-        // Clear existing properties
-        propertiesContent.innerHTML = '';
-        
-        // Create temporary state for unsaved changes
-        const tempState = {
-            properties: JSON.parse(JSON.stringify(asset.properties)),
-            styles: asset.styles ? JSON.parse(JSON.stringify(asset.styles)) : {}
-        };
-        
-        // Add properties based on type
-        Object.entries(asset.properties).forEach(([key, prop]) => {
-            let propertyElement;
-            
-            switch (prop.type) {
-                case 'text':
-                    propertyElement = createTextProperty(key, prop, tempState);
-                    break;
-                case 'image':
-                    propertyElement = createImageProperty(key, prop, tempState);
-                    break;
-                case 'color':
-                    propertyElement = createColorProperty(key, prop, tempState);
-                    break;
-                case 'font':
-                    propertyElement = createFontProperty(key, prop, tempState);
-                    break;
-            }
-            
-            if (propertyElement) {
-                propertiesContent.appendChild(propertyElement);
-            }
-        });
-
-        // Add color properties section
-        const colorSection = document.createElement('div');
-        colorSection.className = 'property-section';
-        colorSection.innerHTML = '<h4>Colors</h4>';
-        
-        const colorGroup = document.createElement('div');
-        colorGroup.className = 'property-group';
-        colorGroup.innerHTML = `
-            <label class="property-label">Colors</label>
-            <div class="color-inputs">
-                <div class="color-input">
-                    <label>Background Color</label>
-                    <input type="color" class="property-input" value="${tempState.styles.bgColor || '#ffffff'}">
-                </div>
-                <div class="color-input">
-                    <label>Text Color</label>
-                    <input type="color" class="property-input" value="${tempState.styles.textColor || '#333333'}">
-                </div>
-                <div class="color-input">
-                    <label>Border Color</label>
-                    <input type="color" class="property-input" value="${tempState.styles.borderColor || '#e0e0e0'}">
-                </div>
-                <div class="color-input">
-                    <label>Accent Color</label>
-                    <input type="color" class="property-input" value="${tempState.styles.accentColor || '#4A90E2'}">
-                </div>
-            </div>
-        `;
-
-        const colorInputs = colorGroup.querySelectorAll('input[type="color"]');
-        colorInputs.forEach(input => {
-            input.addEventListener('input', (e) => {
-                const colorType = e.target.parentElement.querySelector('label').textContent.toLowerCase().replace(/\s+/g, '');
-                tempState.styles[colorType] = e.target.value;
-            });
-        });
-
-        colorSection.appendChild(colorGroup);
-        propertiesContent.appendChild(colorSection);
-
-        // Add save button
-        const saveButton = document.createElement('button');
-        saveButton.className = 'save-properties-btn';
-        saveButton.textContent = 'Save Changes';
-        saveButton.addEventListener('click', async () => {
-            try {
-                // Update the actual state with temporary changes
-                state.assets[assetId].properties = tempState.properties;
-                state.assets[assetId].styles = tempState.styles;
-                
-                // Update preview
-                updatePreview();
-                
-                // Save state to server
-                const response = await fetch('asset_manager.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: `action=save_state&state=${encodeURIComponent(JSON.stringify(state))}`
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to save changes');
-                }
-
-                const data = await response.json();
-                if (!data.success) {
-                    throw new Error(data.error || 'Failed to save changes');
-                }
-
-                // Show success notification
-                const notification = document.createElement('div');
-                notification.className = 'save-notification';
-                notification.textContent = 'Changes saved';
-                document.body.appendChild(notification);
-                setTimeout(() => notification.remove(), 2000);
-                
-                // Close properties panel
-                closeProperties();
-            } catch (error) {
-                console.error('Error saving state:', error);
-                alert('Failed to save changes. Please try again.');
-            }
-        });
-        propertiesContent.appendChild(saveButton);
-
-        // Show the panel
-        propertiesPanel.classList.add('active');
-    }
-
-    // Create text property input
-    function createTextProperty(key, prop, tempState) {
-        const template = document.getElementById('textProperty');
-        const element = template.content.cloneNode(true);
-        
-        const label = element.querySelector('.property-label');
-        label.textContent = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-        
-        const input = element.querySelector('.property-input');
-        input.value = prop.value;
-        
-        input.addEventListener('input', (e) => {
-            tempState.properties[key].value = e.target.value;
-        });
-        
-        return element;
-    }
-
-    // Create image property input
-    function createImageProperty(key, prop, tempState) {
-        const template = document.getElementById('imageProperty');
-        const element = template.content.cloneNode(true);
-        
-        const label = element.querySelector('.property-label');
-        label.textContent = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-        
-        const input = element.querySelector('.property-input');
-        const preview = element.querySelector('.image-preview');
-        
-        if (prop.value) {
-            const img = document.createElement('img');
-            img.src = prop.value;
-            preview.appendChild(img);
-        }
-        
-        input.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                preview.innerHTML = '<div class="loading">Uploading...</div>';
-                
-                try {
-                    const formData = new FormData();
-                    formData.append('action', 'upload_image');
-                    formData.append('image', file);
-                    
-                    const response = await fetch('asset_manager.php', {
-                        method: 'POST',
-                        body: formData
-                    });
-                    
-                    if (!response.ok) throw new Error('Upload failed');
-                    
-                    const data = await response.json();
-                    if (data.success) {
-                        tempState.properties[key].value = data.url;
-                        preview.innerHTML = `<img src="${data.url}">`;
-                    } else {
-                        throw new Error(data.error || 'Upload failed');
-                    }
-                } catch (error) {
-                    console.error('Error uploading image:', error);
-                    preview.innerHTML = '<div class="error">Upload failed</div>';
-                    setTimeout(() => {
-                        preview.innerHTML = prop.value ? `<img src="${prop.value}">` : '';
-                    }, 2000);
-                }
-            }
-        });
-        
-        return element;
-    }
-
-    // Create color property input
-    function createColorProperty(key, prop, tempState) {
-        const template = document.getElementById('colorProperty');
-        const element = template.content.cloneNode(true);
-        
-        const label = element.querySelector('.property-label');
-        label.textContent = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-        
-        const input = element.querySelector('.property-input');
-        input.value = prop.value;
-        
-        input.addEventListener('input', (e) => {
-            tempState.properties[key].value = e.target.value;
-        });
-        
-        return element;
-    }
-
-    // Create font property input
-    function createFontProperty(key, prop, tempState) {
-        const template = document.getElementById('fontProperty');
-        const element = template.content.cloneNode(true);
-        
-        const label = element.querySelector('.property-label');
-        label.textContent = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-        
-        const select = element.querySelector('.property-input');
-        select.value = prop.value;
-        
-        select.addEventListener('change', (e) => {
-            tempState.properties[key].value = e.target.value;
-        });
-        
-        return element;
-    }
-
-    // Update asset property
-    function updateAssetProperty(assetId, key, value) {
-        if (state.assets[assetId]) {
-            // Update the property value
-            state.assets[assetId].properties[key].value = value;
-            
-            // Update the preview immediately
-            const preview = document.getElementById('preview');
-            const assetElement = preview.querySelector(`[data-asset-id="${assetId}"]`);
-            
-            if (assetElement) {
-                const element = assetElement.querySelector(state.assets[assetId].properties[key].selector);
-                if (element) {
-                    if (state.assets[assetId].properties[key].type === 'image') {
-                        element.src = value;
-                    } else {
-                        element.textContent = value;
-                    }
-                }
-            }
-            
-            // Save state to server
-            saveState().then(() => {
-                // Show a small notification
-                const notification = document.createElement('div');
-                notification.className = 'save-notification';
-                notification.textContent = 'Changes saved';
-                document.body.appendChild(notification);
-                
-                // Remove notification after 2 seconds
-                setTimeout(() => {
-                    notification.remove();
-                }, 2000);
-            });
-        }
-    }
-
-    // Update preview
-    function updatePreview() {
-        const preview = document.getElementById('preview');
-        if (!preview) return;
-
-        // Clear existing content
-        preview.innerHTML = '';
-
-        // Add header
-        const headerTemplate = document.getElementById('headerTemplate');
-        const header = headerTemplate.content.cloneNode(true);
-        
-        // Update header content and styles
-        const headerElement = header.querySelector('.site-header');
-        if (headerElement) {
-            headerElement.classList.add('header-styled');
-            headerElement.dataset.bgColor = state.header.styles.bgColor;
-            headerElement.dataset.textColor = state.header.styles.textColor;
-            
-            // Add edit button to header
-            const headerControls = document.createElement('div');
-            headerControls.className = 'asset-controls';
-            headerControls.innerHTML = `
-                <button class="edit-btn" title="Edit Header">✎</button>
-            `;
-            headerControls.querySelector('.edit-btn').addEventListener('click', () => {
-                showHeaderFooterProperties();
-            });
-            headerElement.appendChild(headerControls);
-        }
-        
-        const headerLogo = header.querySelector('[data-editable="header_logo"]');
-        const headerTitle = header.querySelector('[data-editable="header_title"]');
-        const navLinks = header.querySelectorAll('[data-editable^="nav_"]');
-        
-        if (headerLogo) headerLogo.src = state.header.logo;
-        if (headerTitle) {
-            headerTitle.textContent = state.header.title;
-            headerTitle.dataset.textColor = state.header.styles.textColor;
-        }
-        
-        navLinks.forEach(link => {
-            const key = link.dataset.editable.replace('nav_', '');
-            if (state.header.nav[key]) {
-                link.textContent = state.header.nav[key];
-                link.dataset.navColor = state.header.styles.navColor;
-                link.dataset.navHoverColor = state.header.styles.navHoverColor;
-            }
-        });
-        
-        preview.appendChild(header);
-
-        // Create main content container
-        const mainContent = document.createElement('main');
-        mainContent.className = 'main-content';
-
-        if (Object.keys(state.assets).length > 0) {
-            // Create style element for all CSS
-            const style = document.createElement('style');
-            style.textContent = Object.values(state.assets).map(asset => asset.css).join('\n');
-            mainContent.appendChild(style);
-
-            // Add all assets
-            Object.entries(state.assets).forEach(([assetId, asset]) => {
-                const container = document.createElement('div');
-                container.className = 'asset';
-                container.dataset.assetId = assetId;
-                
-                // Add asset HTML
-                container.innerHTML = asset.html;
-                
-                // Add controls
-                const controls = document.createElement('div');
-                controls.className = 'asset-controls';
-                controls.innerHTML = `
-                    <div class="drag-handle" draggable="true" title="Drag to reorder"></div>
-                    <button class="edit-btn" title="Edit">✎</button>
-                    <button class="delete-btn" title="Delete">×</button>
-                `;
-                container.appendChild(controls);
-                
-                // Add event listeners
-                const dragHandle = controls.querySelector('.drag-handle');
-                dragHandle.addEventListener('dragstart', (e) => {
-                    e.dataTransfer.setData('text/plain', assetId);
-                    container.classList.add('dragging');
-                });
-
-                dragHandle.addEventListener('dragend', () => {
-                    container.classList.remove('dragging');
-                });
-                
-                // Fix edit button event listener
-                const editBtn = controls.querySelector('.edit-btn');
-                editBtn.addEventListener('click', (e) => {
-                    e.stopPropagation(); // Prevent event bubbling
-                    showProperties(assetId);
-                });
-                
-                controls.querySelector('.delete-btn').addEventListener('click', () => {
-                    if (confirm('Are you sure you want to delete this asset?')) {
-                        delete state.assets[assetId];
-                        updatePreview();
-                        saveState();
-                        closeProperties();
-                    }
-                });
-                
-                // Apply properties
-                Object.entries(asset.properties).forEach(([key, prop]) => {
-                    const element = container.querySelector(prop.selector);
-                    if (element) {
-                        if (prop.type === 'image') {
-                            element.src = prop.value;
-                        } else {
-                            element.textContent = prop.value;
-                        }
-                    }
-                });
-                
-                mainContent.appendChild(container);
-            });
-        } else {
-            mainContent.innerHTML = '<p class="placeholder">Add assets from the right panel to start building your page.</p>';
-        }
-        
-        preview.appendChild(mainContent);
-
-        // Add footer
-        const footerTemplate = document.getElementById('footerTemplate');
-        const footer = footerTemplate.content.cloneNode(true);
-        
-        // Update footer content and styles
-        const footerElement = footer.querySelector('.site-footer');
-        if (footerElement) {
-            footerElement.classList.add('footer-styled');
-            footerElement.dataset.bgColor = state.footer.styles.bgColor;
-            footerElement.dataset.textColor = state.footer.styles.textColor;
-            
-            // Add edit button to footer
-            const footerControls = document.createElement('div');
-            footerControls.className = 'asset-controls';
-            footerControls.innerHTML = `
-                <button class="edit-btn" title="Edit Footer">✎</button>
-            `;
-            footerControls.querySelector('.edit-btn').addEventListener('click', () => {
-                showHeaderFooterProperties();
-            });
-            footerElement.appendChild(footerControls);
-        }
-        
-        const footerElements = footer.querySelectorAll('[data-editable]');
-        footerElements.forEach(element => {
-            const key = element.dataset.editable;
-            const [section, field] = key.split('_');
-            
-            if (state.footer[section] && state.footer[section][field]) {
-                element.textContent = state.footer[section][field];
-                element.dataset.textColor = state.footer.styles.textColor;
-            }
-        });
-
-        // Update footer links
-        const footerLinks = footer.querySelectorAll('a');
-        footerLinks.forEach(link => {
-            link.dataset.linkColor = state.footer.styles.linkColor;
-            link.dataset.linkHoverColor = state.footer.styles.linkHoverColor;
-        });
-        
-        preview.appendChild(footer);
-    }
-
-    // Move saveState function to global scope
-    async function saveState() {
-        try {
-            console.log('Saving state:', state); // Debug log
-            
-            const response = await fetch('asset_manager.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: `action=save_state&state=${encodeURIComponent(JSON.stringify(state))}`
-            });
-
-            console.log('Save response status:', response.status); // Debug log
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            console.log('Save response data:', data); // Debug log
-            
-            if (!data.success) {
-                throw new Error(data.error || 'Failed to save changes');
-            }
-
-            return true;
-        } catch (error) {
-            console.error('Error saving state:', error);
-            throw error; // Re-throw to handle in the calling function
-        }
-    }
-
-    // Add CSS for notifications
-    const style = document.createElement('style');
-    style.textContent = `
-        .save-notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--primary-color);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            z-index: 1000;
-            animation: fadeInOut 2s ease-in-out;
-        }
-
-        .loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: var(--text-color);
-        }
-
-        .error {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            color: #dc3545;
-        }
-
-        @keyframes fadeInOut {
-            0% { opacity: 0; transform: translateY(20px); }
-            10% { opacity: 1; transform: translateY(0); }
-            90% { opacity: 1; transform: translateY(0); }
-            100% { opacity: 0; transform: translateY(-20px); }
-        }
-    `;
-    document.head.appendChild(style);
-
-    // Initialize preview
-    updatePreview();
-
-    // Remove the old header/footer edit button
-    const previewHeader = document.querySelector('.preview-header');
-    if (previewHeader) {
-        const oldEditButton = previewHeader.querySelector('.btn-primary:last-child');
-        if (oldEditButton) {
-            oldEditButton.remove();
-        }
-    }
-
-    // Add close button functionality
-    const closeButton = document.querySelector('.close-properties');
-    if (closeButton) {
-        closeButton.addEventListener('click', closeProperties);
-    }
-
-    // Initialize drag and drop functionality
-    initializeDragAndDrop();
-
-    // Function to add asset buttons to the control panel
-    function addAssetButtons() {
-        const assetPanel = document.getElementById('asset-panel');
-        
-        // Clear existing buttons if needed
-        assetPanel.innerHTML = '';
-
-        // Existing asset buttons...
-
-        // Add button for the new hero asset
-        const heroButton = document.createElement('button');
-        heroButton.innerText = 'Edit Hero Asset';
-        heroButton.dataset.asset = 'hero'; // Set the asset type
-        heroButton.onclick = function() {
-            // Logic to open the asset editor for the hero asset
-            openAssetEditor('hero'); // Assuming you have a function to open the editor
-        };
-        assetPanel.appendChild(heroButton);
-
-        // Add button for the new intro-video asset
-        const introVideoButton = document.createElement('button');
-        introVideoButton.innerText = 'Edit Intro Video Asset';
-        introVideoButton.dataset.asset = 'intro-video'; // Set the asset type
-        introVideoButton.onclick = function() {
-            // Logic to open the asset editor for the intro-video asset
-            openAssetEditor('intro-video'); // Assuming you have a function to open the editor
-        };
-        assetPanel.appendChild(introVideoButton);
-    }
-
-    // Call the function to add the buttons when the document is ready
-    addAssetButtons();
 });
 
 // Show header/footer properties
@@ -736,6 +700,7 @@ function showHeaderFooterProperties() {
     // Create temporary state for unsaved changes
     const tempHeaderState = JSON.parse(JSON.stringify(state.header));
     const tempFooterState = JSON.parse(JSON.stringify(state.footer));
+    const tempPagesState = JSON.parse(JSON.stringify(state.pages));
     
     // Add header properties
     const headerSection = document.createElement('div');
@@ -860,6 +825,31 @@ function showHeaderFooterProperties() {
     
     propertiesContent.appendChild(headerSection);
     
+    // Add page properties section
+    const pagesSection = document.createElement('div');
+    pagesSection.className = 'property-section';
+    pagesSection.innerHTML = '<h4>Page Titles</h4><p class="section-description">Edit the titles for each page of your website</p>';
+    
+    // Create inputs for each page title
+    Object.entries(tempPagesState).forEach(([pageKey, pageData]) => {
+        const pageGroup = document.createElement('div');
+        pageGroup.className = 'property-group';
+        pageGroup.innerHTML = `
+            <label class="property-label">${pageKey.charAt(0).toUpperCase() + pageKey.slice(1)} Page Title</label>
+            <input type="text" class="property-input" data-page-key="${pageKey}" value="${pageData.title || pageKey}">
+        `;
+        
+        // Update temporary state when input changes
+        pageGroup.querySelector('input').addEventListener('input', (e) => {
+            const pageKey = e.target.dataset.pageKey;
+            tempPagesState[pageKey].title = e.target.value;
+        });
+        
+        pagesSection.appendChild(pageGroup);
+    });
+    
+    propertiesContent.appendChild(pagesSection);
+    
     // Add footer properties
     const footerSection = document.createElement('div');
     footerSection.className = 'property-section';
@@ -953,107 +943,17 @@ function showHeaderFooterProperties() {
     saveButton.textContent = 'Save Changes';
     saveButton.addEventListener('click', async () => {
         try {
-            console.log('Saving header/footer changes...'); // Debug log
+            console.log('Saving header/footer/page changes...'); // Debug log
             
             // Update the actual state with temporary changes
             state.header = tempHeaderState;
             state.footer = tempFooterState;
+            state.pages = tempPagesState;
             
             console.log('Updated state:', state); // Debug log
             
             // Update preview directly
-            const preview = document.getElementById('preview');
-            if (preview) {
-                // Clear existing content
-                preview.innerHTML = '';
-
-                // Add header
-                const headerTemplate = document.getElementById('headerTemplate');
-                const header = headerTemplate.content.cloneNode(true);
-                
-                // Update header content and styles
-                const headerElement = header.querySelector('.site-header');
-                if (headerElement) {
-                    headerElement.classList.add('header-styled');
-                    headerElement.dataset.bgColor = state.header.styles.bgColor;
-                    headerElement.dataset.textColor = state.header.styles.textColor;
-                    
-                    // Add edit button to header
-                    const headerControls = document.createElement('div');
-                    headerControls.className = 'asset-controls';
-                    headerControls.innerHTML = `
-                        <button class="edit-btn" title="Edit Header">✎</button>
-                    `;
-                    headerControls.querySelector('.edit-btn').addEventListener('click', () => {
-                        showHeaderFooterProperties();
-                    });
-                    headerElement.appendChild(headerControls);
-                }
-                
-                const headerLogo = header.querySelector('[data-editable="header_logo"]');
-                const headerTitle = header.querySelector('[data-editable="header_title"]');
-                const navLinks = header.querySelectorAll('[data-editable^="nav_"]');
-                
-                if (headerLogo) headerLogo.src = state.header.logo;
-                if (headerTitle) {
-                    headerTitle.textContent = state.header.title;
-                    headerTitle.dataset.textColor = state.header.styles.textColor;
-                }
-                
-                navLinks.forEach(link => {
-                    const key = link.dataset.editable.replace('nav_', '');
-                    if (state.header.nav[key]) {
-                        link.textContent = state.header.nav[key];
-                        link.dataset.navColor = state.header.styles.navColor;
-                        link.dataset.navHoverColor = state.header.styles.navHoverColor;
-                    }
-                });
-                
-                preview.appendChild(header);
-
-                // Add footer
-                const footerTemplate = document.getElementById('footerTemplate');
-                const footer = footerTemplate.content.cloneNode(true);
-                
-                // Update footer content and styles
-                const footerElement = footer.querySelector('.site-footer');
-                if (footerElement) {
-                    footerElement.classList.add('footer-styled');
-                    footerElement.dataset.bgColor = state.footer.styles.bgColor;
-                    footerElement.dataset.textColor = state.footer.styles.textColor;
-                    
-                    // Add edit button to footer
-                    const footerControls = document.createElement('div');
-                    footerControls.className = 'asset-controls';
-                    footerControls.innerHTML = `
-                        <button class="edit-btn" title="Edit Footer">✎</button>
-                    `;
-                    footerControls.querySelector('.edit-btn').addEventListener('click', () => {
-                        showHeaderFooterProperties();
-                    });
-                    footerElement.appendChild(footerControls);
-                }
-                
-                const footerElements = footer.querySelectorAll('[data-editable]');
-                footerElements.forEach(element => {
-                    const key = element.dataset.editable;
-                    const [section, field] = key.split('_');
-                    
-                    if (state.footer[section] && state.footer[section][field]) {
-                        element.textContent = state.footer[section][field];
-                        element.dataset.textColor = state.footer.styles.textColor;
-                    }
-                });
-
-                // Update footer links
-                const footerLinks = footer.querySelectorAll('a');
-                footerLinks.forEach(link => {
-                    link.dataset.linkColor = state.footer.styles.linkColor;
-                    link.dataset.linkHoverColor = state.footer.styles.linkHoverColor;
-                });
-                
-                preview.appendChild(footer);
-            }
+            updatePreview();
             
             // Save state to server directly
             const response = await fetch('asset_manager.php', {
@@ -1061,7 +961,7 @@ function showHeaderFooterProperties() {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `action=save_state&state=${encodeURIComponent(JSON.stringify(state))}`
+                body: `action=save_state&page_id=${encodeURIComponent(currentPageId)}&state=${encodeURIComponent(JSON.stringify(state))}`
             });
 
             if (!response.ok) {
@@ -1093,93 +993,18 @@ function showHeaderFooterProperties() {
     propertiesPanel.classList.add('active');
 }
 
-function initializeDragAndDrop() {
-    const previewContainer = document.querySelector('.preview-container');
-    const assets = previewContainer.querySelectorAll('.asset-preview');
-
-    assets.forEach(asset => {
-        // Add drag handle
-        const dragHandle = document.createElement('div');
-        dragHandle.className = 'drag-handle';
-        asset.insertBefore(dragHandle, asset.firstChild);
-        
-        // Make only the drag handle draggable
-        dragHandle.setAttribute('draggable', 'true');
-        
-        dragHandle.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('text/plain', asset.id);
-            asset.classList.add('dragging');
-        });
-
-        dragHandle.addEventListener('dragend', () => {
-            asset.classList.remove('dragging');
-        });
-    });
-
-    previewContainer.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        const draggingAsset = previewContainer.querySelector('.dragging');
-        if (!draggingAsset) return;
-        
-        const siblings = [...previewContainer.querySelectorAll('.asset-preview:not(.dragging)')];
-        
-        const nextSibling = siblings.find(sibling => {
-            const box = sibling.getBoundingClientRect();
-            const offset = e.clientY - box.top - box.height / 2;
-            return offset < 0;
-        });
-
-        previewContainer.insertBefore(draggingAsset, nextSibling);
-    });
-
-    previewContainer.addEventListener('drop', (e) => {
-        e.preventDefault();
-        saveAssetOrder();
-    });
-}
+// We no longer need the initializeDragAndDrop function since we're using numbered positions
 
 function saveAssetOrder() {
-    const previewContainer = document.querySelector('.preview-container');
-    const assets = previewContainer.querySelectorAll('.asset-preview');
-    const order = Array.from(assets).map(asset => asset.id);
-    
-    // Update the state with new order
-    state.assets = order.map(id => {
-        return state.assets.find(asset => asset.id === id);
+    // Make sure each asset has a position
+    Object.entries(state.assets).forEach(([id, asset], index) => {
+        if (!asset.position) {
+            asset.position = index + 1;
+        }
     });
     
-    // Save to localStorage
-    localStorage.setItem('cmsState', JSON.stringify(state));
-}
-
-// Update addAssetToPreview function
-function addAssetToPreview(asset) {
-    const previewContainer = document.querySelector('.preview-container');
-    const assetElement = document.createElement('div');
-    assetElement.className = 'asset-preview';
-    assetElement.id = asset.id;
-    
-    // Add drag handle
-    const dragHandle = document.createElement('div');
-    dragHandle.className = 'drag-handle';
-    assetElement.appendChild(dragHandle);
-    
-    // Add asset content
-    assetElement.innerHTML += asset.html;
-    
-    // Make only the drag handle draggable
-    dragHandle.setAttribute('draggable', 'true');
-    
-    dragHandle.addEventListener('dragstart', (e) => {
-        e.dataTransfer.setData('text/plain', assetElement.id);
-        assetElement.classList.add('dragging');
-    });
-
-    dragHandle.addEventListener('dragend', () => {
-        assetElement.classList.remove('dragging');
-    });
-    
-    previewContainer.appendChild(assetElement);
+    // Save the state
+    saveState();
 }
 
 // Update the closeProperties function
@@ -1188,6 +1013,148 @@ function closeProperties() {
     if (propertiesPanel) {
         propertiesPanel.classList.remove('active');
     }
+}
+
+// Function to show asset properties panel
+function showProperties(assetId) {
+    const asset = state.assets[assetId];
+    if (!asset) {
+        console.error('Asset not found:', assetId);
+        return;
+    }
+    
+    const propertiesPanel = document.getElementById('assetProperties');
+    const propertiesContent = propertiesPanel.querySelector('.properties-content');
+    
+    // Clear existing properties
+    propertiesContent.innerHTML = '';
+    
+    // Create properties UI based on asset type and properties
+    if (asset.properties) {
+        Object.entries(asset.properties).forEach(([key, prop]) => {
+            // Skip if property has no selector or type
+            if (!prop.selector || !prop.type) return;
+            
+            let propTemplate;
+            switch (prop.type) {
+                case 'text':
+                    propTemplate = document.getElementById('textProperty');
+                    break;
+                case 'image':
+                    propTemplate = document.getElementById('imageProperty');
+                    break;
+                case 'color':
+                    propTemplate = document.getElementById('colorProperty');
+                    break;
+                case 'font':
+                    propTemplate = document.getElementById('fontProperty');
+                    break;
+                default:
+                    propTemplate = document.getElementById('textProperty');
+            }
+            
+            if (propTemplate) {
+                const propElement = document.importNode(propTemplate.content, true);
+                const label = propElement.querySelector('.property-label');
+                const input = propElement.querySelector('.property-input');
+                
+                // Set property name as label
+                label.textContent = key.charAt(0).toUpperCase() + key.slice(1).replace(/_/g, ' ');
+                
+                // Set current value
+                if (prop.type === 'image') {
+                    const preview = propElement.querySelector('.image-preview');
+                    if (preview && prop.value) {
+                        const img = document.createElement('img');
+                        img.src = prop.value;
+                        preview.appendChild(img);
+                    }
+                } else {
+                    input.value = prop.value || '';
+                }
+                
+                // Add change listener
+                input.addEventListener('change', async (e) => {
+                    if (prop.type === 'image' && e.target.files && e.target.files[0]) {
+                        const file = e.target.files[0];
+                        const preview = propElement.querySelector('.image-preview');
+                        
+                        // Simple image upload handling
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            prop.value = e.target.result;
+                            
+                            // Update preview
+                            preview.innerHTML = '';
+                            const img = document.createElement('img');
+                            img.src = prop.value;
+                            preview.appendChild(img);
+                            
+                            // Update asset in preview
+                            updatePreview();
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        prop.value = e.target.value;
+                        updatePreview();
+                    }
+                    
+                    // Mark as unsaved
+                    if (typeof markAsUnsaved === 'function') {
+                        markAsUnsaved();
+                    }
+                });
+                
+                propertiesContent.appendChild(propElement);
+            }
+        });
+    } else {
+        propertiesContent.innerHTML = '<p>No properties available for this asset.</p>';
+    }
+    
+    // Add save button
+    const saveButton = document.createElement('button');
+    saveButton.className = 'save-properties-btn';
+    saveButton.textContent = 'Save Changes';
+    saveButton.addEventListener('click', () => {
+        saveState();
+        closeProperties();
+    });
+    propertiesContent.appendChild(saveButton);
+    
+    // Show the properties panel
+    propertiesPanel.classList.add('active');
+}
+
+// Extract properties from HTML template
+function extractProperties(html) {
+    const properties = {};
+    const tempContainer = document.createElement('div');
+    tempContainer.innerHTML = html;
+    
+    const editableElements = tempContainer.querySelectorAll('[data-editable]');
+    editableElements.forEach(el => {
+        const name = el.dataset.editable;
+        const type = el.dataset.type || 'text';
+        let value = '';
+        
+        if (type === 'image' && el.tagName === 'IMG') {
+            value = el.src;
+        } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+            value = el.value;
+        } else {
+            value = el.textContent.trim();
+        }
+        
+        properties[name] = {
+            type,
+            selector: `[data-editable="${name}"]`,
+            value,
+            default: value
+        };
+    });
+    
+    return properties;
 }
 
 // Add this function to handle photo gallery properties
@@ -1331,7 +1298,7 @@ function showPhotoGalleryProperties(assetId) {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `action=save_state&state=${encodeURIComponent(JSON.stringify(state))}`
+                body: `action=save_state&page_id=${encodeURIComponent(currentPageId)}&state=${encodeURIComponent(JSON.stringify(state))}`
             });
 
             if (!response.ok) {
@@ -1443,4 +1410,219 @@ function showIntroVideoProperties(assetId) {
     });
 
     propertiesContent.appendChild(videoGroup);
+}
+
+// Reorder assets when position changes (for global assets)
+function reorderAssets(assetId, oldPosition, newPosition) {
+    // Adjust positions of other assets
+    Object.entries(state.assets).forEach(([id, asset]) => {
+        if (id === assetId) return; // Skip the asset we just updated
+        
+        if (oldPosition < newPosition) {
+            // Moving down: decrease position of assets between old and new positions
+            if (asset.position > oldPosition && asset.position <= newPosition) {
+                asset.position -= 1;
+            }
+        } else if (oldPosition > newPosition) {
+            // Moving up: increase position of assets between new and old positions
+            if (asset.position >= newPosition && asset.position < oldPosition) {
+                asset.position += 1;
+            }
+        }
+    });
+}
+
+// Reorder assets within a specific page
+function reorderPageAssets(pageKey, assetId, oldPosition, newPosition) {
+    // Make sure the page exists in state
+    if (!state.pages[pageKey]) {
+        console.error(`Page ${pageKey} not found in state`);
+        return;
+    }
+    
+    // Make sure the page has assets
+    if (!state.pages[pageKey].assets) {
+        console.error(`Page ${pageKey} has no assets property`);
+        return;
+    }
+    
+    // Adjust positions of other assets in this page
+    Object.entries(state.pages[pageKey].assets).forEach(([id, asset]) => {
+        if (id === assetId) return; // Skip the asset we're moving
+        
+        if (oldPosition < newPosition) {
+            // Moving down: decrease position of assets between old and new positions
+            if (asset.position > oldPosition && asset.position <= newPosition) {
+                asset.position -= 1;
+            }
+        } else if (oldPosition > newPosition) {
+            // Moving up: increase position of assets between new and old positions
+            if (asset.position >= newPosition && asset.position < oldPosition) {
+                asset.position += 1;
+            }
+        }
+    });
+    
+    console.log(`Reordered assets in page ${pageKey}. Asset ${assetId} moved from position ${oldPosition} to ${newPosition}`);
+}
+
+// Function to switch between pages
+function switchPage(pageKey) {
+    console.log('switchPage called with:', pageKey);
+    
+    if (!pageKey) {
+        console.error('No page key provided to switchPage function');
+        return;
+    }
+    
+    if (!state.pages[pageKey]) {
+        console.error(`Page "${pageKey}" does not exist in state`);
+        return;
+    }
+    
+    try {
+        // Save current state before switching
+        saveState();
+        
+        // Update current page
+        state.currentPage = pageKey;
+        
+        // Update URL with page parameter (without reloading)
+        const url = new URL(window.location.href);
+        url.searchParams.set('page', pageKey);
+        window.history.pushState({page: pageKey}, '', url);
+        
+        // Update preview with new page content
+        updatePreview();
+        
+        // Close any open property panels
+        closeProperties();
+        
+        // Update active tab in sidebar
+        document.querySelectorAll('.page-tab').forEach(tab => {
+            if (tab.getAttribute('data-page') === pageKey) {
+                tab.classList.add('active');
+            } else {
+                tab.classList.remove('active');
+            }
+        });
+        
+        console.log(`Successfully switched to page: ${pageKey}`);
+    } catch (error) {
+        console.error('Error switching page:', error);
+    }
+}
+
+// Force reload of asset categories via page reload with parameter
+function reloadAssetCategories(pageKey) {
+    // Check if we need to reload to update PHP-generated content
+    const currentUrlPage = new URL(window.location.href).searchParams.get('page');
+    
+    // Only reload if this is the first time switching to a page or if explicitly requested
+    if (currentUrlPage !== pageKey) {
+        console.log('Reloading to update asset categories for:', pageKey);
+        const url = new URL(window.location.href);
+        url.searchParams.set('page', pageKey);
+        window.location.href = url.toString();
+    }
+}
+
+// Check for page parameter in URL on load
+function checkUrlForPageParam() {
+    const url = new URL(window.location.href);
+    const pageParam = url.searchParams.get('page');
+    
+    if (pageParam && state.pages[pageParam]) {
+        console.log('Found page parameter in URL:', pageParam);
+        // Set the current page without switching (no reload)
+        state.currentPage = pageParam;
+        
+        // Update UI to reflect the current page
+        document.querySelectorAll('.page-tab').forEach(tab => {
+            if (tab.getAttribute('data-page') === pageParam) {
+                tab.classList.add('active');
+            } else {
+                tab.classList.remove('active');
+            }
+        });
+    }
+}
+
+// Run on page load
+checkUrlForPageParam();
+
+// Update asset categories based on current page
+function updateAssetCategories(pageKey) {
+    // This would be handled by PHP, but we can add a UI update here
+    // to reflect the current page in case we need it for the JS side
+    console.log(`Updating asset categories for page: ${pageKey}`);
+}
+
+// Function to save the current state to the database
+async function saveState() {
+    // Show saving indicator
+    const saveButton = document.getElementById('savePreview');
+    if (saveButton) {
+        const originalText = saveButton.textContent;
+        saveButton.textContent = 'Saving...';
+        saveButton.disabled = true;
+    }
+    
+    try {
+        console.log('Saving state to database...');
+        
+        // Get page_id from URL parameter or use default
+        const pageId = currentPageId || getPageIdFromUrl() || 'homepage';
+        console.log('Saving state for page_id:', pageId);
+        
+        // Make a deep copy of the state to avoid reference issues
+        const stateCopy = JSON.parse(JSON.stringify(state));
+        
+        const response = await fetch('asset_manager.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `action=save_state&state=${encodeURIComponent(JSON.stringify(stateCopy))}&page_id=${encodeURIComponent(pageId)}`
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('Save response:', data);
+        
+        if (data.success) {
+            // Update last save time
+            lastSaveTime = Date.now();
+            
+            // Clear unsaved changes flag
+            hasUnsavedChanges = false;
+            
+            // Update save button
+            if (saveButton) {
+                saveButton.classList.remove('unsaved');
+                saveButton.textContent = 'Save Work';
+            }
+            
+            console.log('State saved successfully');
+            
+            // Simple notification
+            showNotification('Changes saved successfully', 'success');
+        } else {
+            throw new Error(data.error || 'Failed to save changes');
+        }
+    } catch (error) {
+        console.error('Error saving state:', error);
+        showNotification('Error saving changes: ' + error.message, 'error');
+    } finally {
+        // Reset save button state
+        if (saveButton) {
+            saveButton.textContent = 'Save Work';
+            saveButton.disabled = false;
+        }
+    }
 } 
+
+ 

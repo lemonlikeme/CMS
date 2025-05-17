@@ -1,15 +1,19 @@
-
 <?php
 session_start();
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../index.php?login=required");
     exit();
 }
+
+// Get template ID from GET parameter or session
+$templateId = $_GET['template_id'] ?? $_SESSION['current_template_id'] ?? 'homepage';
+$_SESSION['current_template_id'] = $templateId;
 ?>
 
 <script>
         console.group('Form Submission Data');
         console.log('Site Title:', <?php echo json_encode($_SESSION['site_title'] ?? 'Not set'); ?>);
+        console.log('Template ID:', <?php echo json_encode($templateId); ?>);
         console.log('Submission Time:', <?php echo json_encode($_SESSION['submission_time'] ?? 'Not set'); ?>);
         console.log('Homepage Sections (array):', <?php echo json_encode($_SESSION['homepage_sections'] ?? 'Not set'); ?>);
         console.log('Homepage Sections (string):', <?php echo json_encode($_SESSION['homepage_sections_string'] ?? 'Not set'); ?>);
@@ -62,6 +66,7 @@ if (!isset($_SESSION['user_id'])) {
         <h1>Choose a color palette</h1>
         <p class="subtext">These custom palettes were curated by our designers. You can always change up your colors later.</p>
         <form id="color_input" method="POST" action="save_preferences.php">
+          <input type="hidden" name="template_id" value="<?php echo htmlspecialchars($templateId); ?>">
           <div class="palette-grid">
             <!-- Professional -->
             <div class="palette-set">
@@ -203,6 +208,7 @@ if (!isset($_SESSION['user_id'])) {
 
       <div class="button-container">
         <form action="pages.php" method="get">
+          <input type="hidden" name="template_id" value="<?php echo htmlspecialchars($templateId); ?>">
           <button type="submit" class="button-back">BACK</button>
         </form>
           <button type="submit" form="color_input" class="button-next">NEXT</button>
@@ -212,20 +218,29 @@ if (!isset($_SESSION['user_id'])) {
 
   <script src="scripts.js"></script>
   <script src="../jscripts/bTcolor.js" defer></script>
-</body>
-<script>document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll('.palette').forEach(palette => {
-    palette.addEventListener('click', function() {
-      const radio = this.querySelector('input[type="radio"]');
-      if (radio) {
-        radio.checked = true;
-        console.log('Palette selected:', radio.value); 
-      }
-      document.querySelectorAll('.palette').forEach(p => p.classList.remove('selected'));
-      
-      this.classList.add('selected');
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    // Make sure radio buttons are properly checked when palettes are clicked
+    document.querySelectorAll('.palette').forEach(palette => {
+      palette.addEventListener('click', function() {
+        // Uncheck all other radio buttons
+        document.querySelectorAll('.palette input[type="radio"]').forEach(radio => {
+          radio.checked = false;
+        });
+        
+        // Check this palette's radio button
+        const radio = this.querySelector('input[type="radio"]');
+        if (radio) {
+          radio.checked = true;
+          console.log('Palette selected:', radio.value);
+        }
+        
+        // Update visual selection
+        document.querySelectorAll('.palette').forEach(p => p.classList.remove('selected'));
+        this.classList.add('selected');
+      });
     });
   });
-});
-</script>
+  </script>
+</body>
 </html>

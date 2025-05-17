@@ -4,10 +4,15 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: ../index.php?login=required");
     exit();
 }
+
+// Get template ID from GET parameter or session
+$templateId = $_GET['template_id'] ?? $_SESSION['current_template_id'] ?? 'homepage';
+$_SESSION['current_template_id'] = $templateId;
 ?>
 <script>
         console.group('Form Submission Data');
         console.log('Site Title:', <?php echo json_encode($_SESSION['site_title'] ?? 'Not set'); ?>);
+        console.log('Template ID:', <?php echo json_encode($templateId); ?>);
         console.log('Submission Time:', <?php echo json_encode($_SESSION['submission_time'] ?? 'Not set'); ?>);
         console.log('Full Session:', <?php echo json_encode($_SESSION); ?>);
         console.groupEnd();
@@ -46,6 +51,7 @@ if (!isset($_SESSION['user_id'])) {
         <h1>Build your homepage</h1>
         <p class="subtext">Build your homepage section-by-section, adding as many or as few sections as you need.</p>
         <form id="homepage_input" method="POST" action="save_preferences.php">
+          <input type="hidden" name="template_id" value="<?php echo htmlspecialchars($templateId); ?>">
           <div class="section-options">
               <label><input type="checkbox" name="homepage_sections[]" value="intro"> Intro section</label>
               <label><input type="checkbox" name="homepage_sections[]" value="products"> Products section</label>
@@ -72,6 +78,7 @@ if (!isset($_SESSION['user_id'])) {
       <!-- Navigation Buttons -->
       <div class="button-container">
         <form action="site.php" method="get">
+          <input type="hidden" name="page_id" value="<?php echo htmlspecialchars($templateId); ?>">
           <button type="submit" class="button-back">BACK</button>
         </form>
        

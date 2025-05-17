@@ -4,10 +4,15 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: ../index.php?login=required");
     exit();
 }
+
+// Get template ID from GET parameter or session
+$templateId = $_GET['template_id'] ?? $_SESSION['current_template_id'] ?? 'homepage';
+$_SESSION['current_template_id'] = $templateId;
 ?>
 <script>
         console.group('Form Submission Data');
         console.log('Site Title:', <?php echo json_encode($_SESSION['site_title'] ?? 'Not set'); ?>);
+        console.log('Template ID:', <?php echo json_encode($templateId); ?>);
         console.log('Submission Time:', <?php echo json_encode($_SESSION['submission_time'] ?? 'Not set'); ?>);
         console.log('Homepage Sections (array):', <?php echo json_encode($_SESSION['homepage_sections'] ?? 'Not set'); ?>);
         console.log('Homepage Sections (string):', <?php echo json_encode($_SESSION['homepage_sections_string'] ?? 'Not set'); ?>); 
@@ -41,6 +46,7 @@ if (!isset($_SESSION['user_id'])) {
                 </form>
             </div>
             <form id="pages_input" method="POST" action="save_preferences.php">
+                <input type="hidden" name="template_id" value="<?php echo htmlspecialchars($templateId); ?>">
                 
             <div class="content">
                 <h1>Select Your Pages</h1>
@@ -105,6 +111,7 @@ if (!isset($_SESSION['user_id'])) {
 
             <div class="button-container">
                 <form action="homepage.php" method="get">
+                    <input type="hidden" name="template_id" value="<?php echo htmlspecialchars($templateId); ?>">
                     <button type="submit" class="button-back">BACK</button>
                 </form>
                 
